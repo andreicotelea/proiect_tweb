@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Trophy, User, Settings, ChevronLeft, Menu } from 'lucide-react';
+import { Home, BookOpen, Trophy, User, Settings, Bell, Award, ChevronLeft, Menu } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { UserRole } from '@/types';
 
@@ -13,7 +13,10 @@ const baseItems = [
   { path: '/dashboard',   label: 'Dashboard', icon: Home },
   { path: '/lessons',     label: 'Lecții',    icon: BookOpen },
   { path: '/leaderboard', label: 'Clasament', icon: Trophy },
+  { path: '/certificates',  label: 'Certificate',  icon: Award },
+  { path: '/notifications', label: 'Notificari',   icon: Bell },
   { path: '/profile',     label: 'Profil',    icon: User },
+  { path: '/settings',      label: 'Setari',       icon: Settings },
 ];
 
 export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {

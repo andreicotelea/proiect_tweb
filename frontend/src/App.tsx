@@ -3,8 +3,10 @@ import { Routes, Route, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar, TopBar, AuthModal } from '@/components';
 import {
   LandingPage, DashboardPage, LessonsPage, LessonDetailPage,
-  LeaderboardPage, ProfilePage, AdminPage,
+  LeaderboardPage, ProfilePage, AdminPage, SettingsPage,
+  CertificatesPage, NotificationsPage,
 } from '@/pages';
+
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 
@@ -48,8 +50,11 @@ function AppRoutes() {
         <Route path="/lessons"     element={<LessonsPage />} />
         <Route path="/lessons/:id" element={<LessonDetailPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/profile"     element={<RequireAuth><ProfilePage /></RequireAuth>} />
-        <Route path="/admin"       element={role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/notifications"  element={<RequireAuth><NotificationsPage /></RequireAuth>} />
+        <Route path="/certificates"   element={<RequireAuth><CertificatesPage /></RequireAuth>} />
+        <Route path="/profile"        element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="/settings"       element={<RequireAuth><SettingsPage /></RequireAuth>} />
+        <Route path="/admin"          element={role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="*"            element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>
