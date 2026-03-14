@@ -1,0 +1,10 @@
+export { default as LandingPage } from './LandingPage';
+export { default as DashboardPage } from './DashboardPage';
+export { default as LessonsPage } from './LessonsPage';
+export { default as LessonDetailPage } from './LessonDetailPage';
+export { default as LeaderboardPage } from './LeaderboardPage';
+export { default as ProfilePage } from './ProfilePage';
+export { default as AdminPage } from './AdminPage';
+export { default as SettingsPage } from './SettingsPage';
+export { default as CertificatesPage } from './CertificatesPage';
+export { default as NotificationsPage } from './NotificationsPage';
