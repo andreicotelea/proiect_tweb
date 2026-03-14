@@ -7,3 +7,4 @@ export { default as ProfilePage } from './ProfilePage';
 export { default as AdminPage } from './AdminPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as CertificatesPage } from './CertificatesPage';
+export { default as NotificationsPage } from './NotificationsPage';
