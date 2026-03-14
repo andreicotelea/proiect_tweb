@@ -1,0 +1,49 @@
+# Frontend
+node_modules/
+**/node_modules/
+dist/
+build/
+out/
+coverage/
+*.js.map
+npm-debug.log*
+yarn-debug.log*
+*.tsbuildinfo
+
+# Backend - .NET
+**/bin/
+**/obj/
+*.user
+*.userosscache
+*.userprefs
+*.nupkg
+project.lock.json
+
+# Environment / secrets
+.env
+.env.local
+.env.development.local
+.env.production.local
+*.env
+**/appsettings.Development.json
+
+# IDE / editors
+.vs/
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.swp
+*.swo
+*.sln.iml
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Misc
+*.log
+*~
+.eslintcache
