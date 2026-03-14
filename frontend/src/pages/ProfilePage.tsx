@@ -1,10 +1,12 @@
 import { BookOpen, Clock, Trophy, Award, Edit, Check, Play, CheckCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
 import { mockAchievements } from '@/services/mockData';
 
 export default function ProfilePage() {
   const { colors } = useTheme();
+  const { user } = useAuth();
   const recentActivity = [
     { action: 'Ai completat', item: 'Docker & Kubernetes', time: 'Acum 2 ore', icon: Check, color: colors.success },
     { action: 'Ai inceput', item: 'CSS Animations Deep Dive', time: 'Ieri', icon: Play, color: colors.blue },
@@ -30,10 +32,10 @@ export default function ProfilePage() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 28, fontWeight: 800, color: '#fff',
           zIndex: 1, boxShadow: `0 8px 28px ${colors.blueGlow}`,
-        }}>SD</div>
+        }}>{user?.name?.split(' ').map(w => w[0]).join('') || 'U'}</div>
         <div style={{ zIndex: 1 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 3 }}>Student Demo</h2>
-          <p style={{ color: colors.textMuted, fontSize: 13.5, marginBottom: 7 }}>student@learnflow.ro</p>
+          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 3 }}>{user?.name || 'Utilizator'}</h2>
+          <p style={{ color: colors.textMuted, fontSize: 13.5, marginBottom: 7 }}>{user?.email || ''}</p>
           <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
             <span style={{ padding: '3px 10px', borderRadius: 5, fontSize: 11.5, fontWeight: 600, background: 'rgba(109,191,160,0.15)', color: colors.success }}>Pro Member</span>
             <span style={{ fontSize: 11.5, color: colors.textDim }}>Membru din Ianuarie 2025</span>
