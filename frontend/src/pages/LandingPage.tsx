@@ -63,7 +63,7 @@ export default function LandingPage() {
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 17,
           }}>
-            {isDark ? 'L' : 'D'}
+            {isDark ? '☀️' : '🌙'}
           </button>
 
           <button onClick={() => setShowAuth(true)} style={{
@@ -113,7 +113,7 @@ export default function LandingPage() {
           color: colors.blue, fontSize: 12.5, fontWeight: 600,
           marginBottom: 28,
         }}>
-          <Star size={13} fill={colors.blue} /> Platforma #1 de invatare in Romania
+          <Star size={13} fill={colors.blue} /> Platforma #1 de invatare in Moldova
         </div>
 
         <h1 className="animate-in delay-2" style={{
