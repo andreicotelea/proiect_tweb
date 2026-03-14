@@ -4,11 +4,12 @@ import { Sidebar, TopBar, AuthModal } from '@/components';
 import {
   LandingPage, DashboardPage, LessonsPage, LessonDetailPage,
   LeaderboardPage, ProfilePage, AdminPage, SettingsPage,
-  CertificatesPage, NotificationsPage,
+  CertificatesPage, NotificationsPage, HealthCheckPage, ErrorPage,
 } from '@/pages';
 
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
+import AppAxiosProvider from '@/providers/AxiosProvider';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
@@ -44,6 +45,7 @@ function AppRoutes() {
   const { role } = useAuth();
   return (
     <Routes>
+      <Route path="/error" element={<ErrorPage />} />
       <Route path="/" element={<LandingPage />} />
       <Route element={<Layout />}>
         <Route path="/dashboard"   element={<DashboardPage />} />
@@ -54,6 +56,7 @@ function AppRoutes() {
         <Route path="/certificates"   element={<RequireAuth><CertificatesPage /></RequireAuth>} />
         <Route path="/profile"        element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/settings"       element={<RequireAuth><SettingsPage /></RequireAuth>} />
+        <Route path="/health"         element={<HealthCheckPage />} />
         <Route path="/admin"          element={role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="*"            element={<Navigate to="/dashboard" replace />} />
       </Route>
@@ -65,7 +68,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppRoutes />
+          <AppAxiosProvider>
+                <AppRoutes />
+          </AppAxiosProvider>
       </AuthProvider>
     </ThemeProvider>
   );

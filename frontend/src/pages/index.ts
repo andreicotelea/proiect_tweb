@@ -8,3 +8,5 @@ export { default as AdminPage } from './AdminPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as CertificatesPage } from './CertificatesPage';
 export { default as NotificationsPage } from './NotificationsPage';
+export { default as HealthCheckPage } from './HealthCheckPage';
+export { default as ErrorPage } from './ErrorPage';

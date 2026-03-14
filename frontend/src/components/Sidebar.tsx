@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Trophy, User, Settings, Bell, Award, ChevronLeft, Menu } from 'lucide-react';
+import { Home, BookOpen, Trophy, User, Settings, Bell, Award, Activity, ChevronLeft, Menu } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { UserRole } from '@/types';
 
@@ -16,6 +16,7 @@ const baseItems = [
   { path: '/certificates',  label: 'Certificate',  icon: Award },
   { path: '/notifications', label: 'Notificari',   icon: Bell },
   { path: '/profile',     label: 'Profil',    icon: User },
+  { path: '/health',        label: 'Health',      icon: Activity },
   { path: '/settings',      label: 'Setari',       icon: Settings },
 ];
 
