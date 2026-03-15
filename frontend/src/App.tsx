@@ -56,7 +56,7 @@ function AppRoutes() {
         <Route path="/certificates"   element={<RequireAuth><CertificatesPage /></RequireAuth>} />
         <Route path="/profile"        element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/settings"       element={<RequireAuth><SettingsPage /></RequireAuth>} />
-        <Route path="/health"         element={<HealthCheckPage />} />
+        <Route path="/health"         element={role === 'admin' ? <HealthCheckPage /> : <Navigate to="/dashboard" replace />} />        
         <Route path="/admin"          element={role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="*"            element={<Navigate to="/dashboard" replace />} />
       </Route>

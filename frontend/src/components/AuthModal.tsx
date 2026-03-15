@@ -85,8 +85,8 @@ export default function AuthModal({ show, onClose, onLogin }: AuthModalProps) {
             fontSize: 11.5, color: colors.textMuted, lineHeight: 1.9,
           }}>
             <span style={{ color: colors.blue, fontWeight: 600 }}>Conturi test:</span><br />
-            🧑‍💻 <strong>user@learnflow.ro</strong> / <code>user</code> — Student<br />
-            🛡️ <strong>admin@learnflow.ro</strong> / <code>admin</code> — Admin
+            🧑‍💻 <strong>user@learnflow.md</strong> / <code>user</code> — Student<br />
+            🛡️ <strong>admin@learnflow.md</strong> / <code>admin</code> — Admin
           </div>
         )}
 

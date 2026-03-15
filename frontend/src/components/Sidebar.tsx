@@ -16,7 +16,6 @@ const baseItems = [
   { path: '/certificates',  label: 'Certificate',  icon: Award },
   { path: '/notifications', label: 'Notificari',   icon: Bell },
   { path: '/profile',     label: 'Profil',    icon: User },
-  { path: '/health',        label: 'Health',      icon: Activity },
   { path: '/settings',      label: 'Setari',       icon: Settings },
 ];
 
@@ -26,7 +25,10 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
   const location = useLocation();
 
   const items = userRole === 'admin'
-    ? [...baseItems, { path: '/admin', label: 'Admin', icon: Settings }]
+    ? [...baseItems, 
+      { path: '/health', label: 'Health', icon: Activity },
+      { path: '/admin',  label: 'Admin',  icon: Settings },
+    ]
     : baseItems;
 
   return (

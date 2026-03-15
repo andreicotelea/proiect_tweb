@@ -8,12 +8,12 @@ interface TestAccount {
 
 export const TEST_ACCOUNTS: TestAccount[] = [
   {
-    email: 'user@learnflow.ro',
+    email: 'user@learnflow.md',
     password: 'user',
     user: {
       id: 1,
       name: 'Student Demo',
-      email: 'user@learnflow.ro',
+      email: 'user@learnflow.md',
       role: 'student',
       avatar: '🧑‍💻',
       createdAt: '2025-01-15',
@@ -22,12 +22,12 @@ export const TEST_ACCOUNTS: TestAccount[] = [
     },
   },
   {
-    email: 'admin@learnflow.ro',
+    email: 'admin@learnflow.md',
     password: 'admin',
     user: {
       id: 2,
       name: 'Admin Demo',
-      email: 'admin@learnflow.ro',
+      email: 'admin@learnflow.md',
       role: 'admin',
       avatar: '🛡️',
       createdAt: '2024-06-01',

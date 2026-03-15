@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Bell, LogOut } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -19,6 +19,7 @@ const pageTitles: Record<string, string> = {
 export default function TopBar({ isLoggedIn, onLogout, onShowAuth }: TopBarProps) {
   const { colors, toggleTheme, isDark } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isLessonDetail = location.pathname.startsWith('/lessons/') && location.pathname !== '/lessons';
   const title = isLessonDetail ? 'Detalii Lecție' : (pageTitles[location.pathname] || 'LearnFlow');
@@ -48,7 +49,7 @@ export default function TopBar({ isLoggedIn, onLogout, onShowAuth }: TopBarProps
 
         {isLoggedIn ? (
           <>
-            <button style={{
+            <button onClick={() => navigate('/notifications')} style={{
               width: 38, height: 38, borderRadius: 9,
               border: `1px solid ${colors.border}`,
               background: 'transparent', color: colors.textMuted, cursor: 'pointer',
