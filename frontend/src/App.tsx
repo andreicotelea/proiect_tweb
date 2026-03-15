@@ -4,7 +4,7 @@ import { Sidebar, TopBar, AuthModal } from '@/components';
 import {
   LandingPage, DashboardPage, LessonsPage, LessonDetailPage,
   LeaderboardPage, ProfilePage, AdminPage, SettingsPage,
-  CertificatesPage, NotificationsPage, HealthCheckPage, ErrorPage,
+  CertificatesPage, NotificationsPage, HealthCheckPage, ErrorPage, NotFoundPage, 
 } from '@/pages';
 
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
@@ -58,7 +58,7 @@ function AppRoutes() {
         <Route path="/settings"       element={<RequireAuth><SettingsPage /></RequireAuth>} />
         <Route path="/health"         element={role === 'admin' ? <HealthCheckPage /> : <Navigate to="/dashboard" replace />} />        
         <Route path="/admin"          element={role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />} />
-        <Route path="*"            element={<Navigate to="/dashboard" replace />} />
+        <Route path="*"            element={<NotFoundPage />} />
       </Route>
     </Routes>
   );
