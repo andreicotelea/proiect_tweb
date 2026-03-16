@@ -54,4 +54,5 @@ app.UseCors("Frontend");
 app.UseSession();
 app.MapControllers();
 
+app.Urls.Add("http://localhost:5000");
 app.Run();
