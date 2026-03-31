@@ -1,4 +1,4 @@
-using LearnFlow.BusinessLayer.DTOs;
+using LearnFlow.Domain.Models.User;
 
 namespace LearnFlow.BusinessLayer.Interfaces;
 

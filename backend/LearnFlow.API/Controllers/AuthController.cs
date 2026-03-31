@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
+using LearnFlow.Domain.Models.User;
 
 namespace LearnFlow.API.Controllers;
 
@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
     {
         var user = await _auth.Login(dto.Email, dto.Password);
         if (user == null)
@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
     {
         try
         {

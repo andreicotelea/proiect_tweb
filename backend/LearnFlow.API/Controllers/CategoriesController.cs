@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
+using LearnFlow.Domain.Models.Category;
 
 namespace LearnFlow.API.Controllers;
 

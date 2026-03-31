@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
 using LearnFlow.Domain.Entities.Progress;
+using LearnFlow.Domain.Models.Progress;
 
 namespace LearnFlow.BusinessLayer.Services;
 

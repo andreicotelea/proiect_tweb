@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
 using LearnFlow.Domain.Entities.User;
+using LearnFlow.Domain.Models.User;
 
 namespace LearnFlow.BusinessLayer.Services;
 
@@ -26,7 +26,7 @@ public class AuthService : IAuthService
         return MapToDto(user);
     }
 
-    public async Task<UserDto> Register(RegisterDto dto)
+    public async Task<UserDto> Register(UserRegisterDto dto)
     {
         var user = new UserData
         {

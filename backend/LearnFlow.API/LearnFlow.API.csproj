@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LearnFlow.BusinessLayer\LearnFlow.BusinessLayer.csproj" />
     <ProjectReference Include="..\LearnFlow.DataAccessLayer\LearnFlow.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\LearnFlow.Domain\LearnFlow.Domain.csproj" />
   </ItemGroup>
 
 </Project>
