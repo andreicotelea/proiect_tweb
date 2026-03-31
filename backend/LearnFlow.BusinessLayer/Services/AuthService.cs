@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
-using LearnFlow.Domain.Entities;
+using LearnFlow.Domain.Entities.User;
 
 namespace LearnFlow.BusinessLayer.Services;
 
@@ -28,7 +28,7 @@ public class AuthService : IAuthService
 
     public async Task<UserDto> Register(RegisterDto dto)
     {
-        var user = new User
+        var user = new UserData
         {
             Name = dto.Name,
             Email = dto.Email,
@@ -54,7 +54,7 @@ public class AuthService : IAuthService
         return user == null ? null : MapToDto(user);
     }
 
-    private static UserDto MapToDto(User user) => new()
+    private static UserDto MapToDto(UserData user) => new()
     {
         Id = user.Id,
         Name = user.Name,

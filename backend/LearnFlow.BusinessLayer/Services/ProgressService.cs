@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
-using LearnFlow.Domain.Entities;
+using LearnFlow.Domain.Entities.Progress;
 
 namespace LearnFlow.BusinessLayer.Services;
 
@@ -38,7 +38,7 @@ public class ProgressService : IProgressService
 
         if (existing == null)
         {
-            existing = new UserProgress
+            existing = new UserProgressData
             {
                 UserId = dto.UserId,
                 LessonId = dto.LessonId,

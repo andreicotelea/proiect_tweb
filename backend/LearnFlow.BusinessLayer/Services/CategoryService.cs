@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
-using LearnFlow.Domain.Entities;
+using LearnFlow.Domain.Entities.Category;
 
 namespace LearnFlow.BusinessLayer.Services;
 
@@ -30,7 +30,7 @@ public class CategoryService : ICategoryService
 
     public async Task<CategoryDto> Create(CreateCategoryDto dto)
     {
-        var category = new Category
+        var category = new CategoryData
         {
             Name = dto.Name,
             Description = dto.Description,

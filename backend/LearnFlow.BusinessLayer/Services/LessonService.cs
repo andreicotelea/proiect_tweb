@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LearnFlow.BusinessLayer.DTOs;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.DataAccessLayer;
-using LearnFlow.Domain.Entities;
+using LearnFlow.Domain.Entities.Lesson;
 
 namespace LearnFlow.BusinessLayer.Services;
 
@@ -40,7 +40,7 @@ public class LessonService : ILessonService
 
     public async Task<LessonDto> Create(CreateLessonDto dto)
     {
-        var lesson = new Lesson
+        var lesson = new LessonData
         {
             Title = dto.Title,
             Description = dto.Description,
@@ -90,7 +90,7 @@ public class LessonService : ILessonService
         return true;
     }
 
-    private static LessonDto MapToDto(Lesson l) => new()
+    private static LessonDto MapToDto(LessonData l) => new()
     {
         Id = l.Id,
         Title = l.Title,
