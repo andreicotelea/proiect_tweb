@@ -15,9 +15,9 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public IActionResult Get()
     {
-        var data = await _leaderboard.GetLeaderboard();
+        var data = _leaderboard.GetLeaderboard();
         return Ok(new { data });
     }
 }

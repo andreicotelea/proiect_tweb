@@ -4,5 +4,5 @@ namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface ILeaderboardService
 {
-    Task<List<LeaderboardEntryDto>> GetLeaderboard();
+    List<LeaderboardEntryDto> GetLeaderboard();
 }

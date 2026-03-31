@@ -1,11 +1,12 @@
 using LearnFlow.Domain.Models.Category;
+using LearnFlow.Domain.Models.Responses;
 
 namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface ICategoryService
 {
-    Task<List<CategoryDto>> GetAll();
-    Task<CategoryDto> Create(CreateCategoryDto dto);
-    Task<CategoryDto?> Update(int id, CreateCategoryDto dto);
-    Task<bool> Delete(int id);
+    List<CategoryDto> GetAll();
+    ActionResponse Create(CreateCategoryDto dto);
+    ActionResponse Update(int id, CreateCategoryDto dto);
+    ActionResponse Delete(int id);
 }

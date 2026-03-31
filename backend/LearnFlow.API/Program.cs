@@ -1,13 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using LearnFlow.DataAccessLayer;
+using LearnFlow.BusinessLayer;
+using LearnFlow.BusinessLayer.Core;
 using LearnFlow.BusinessLayer.Interfaces;
-using LearnFlow.BusinessLayer.Services;
+using LearnFlow.DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Set connection string for all contexts
+DbSession.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Session-based auth
 builder.Services.AddDistributedMemoryCache();
@@ -19,13 +18,16 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// Services (DI)
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ILessonService, LessonService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProgressService, ProgressService>();
-builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+// BusinessLogic factory
+builder.Services.AddSingleton<BusinessLogic>();
+
+// Services via factory
+builder.Services.AddScoped<IAuthService>(sp => sp.GetRequiredService<BusinessLogic>().GetAuthActions());
+builder.Services.AddScoped<ILessonService>(sp => sp.GetRequiredService<BusinessLogic>().GetLessonActions());
+builder.Services.AddScoped<IUserService>(sp => sp.GetRequiredService<BusinessLogic>().GetUserActions());
+builder.Services.AddScoped<ICategoryService>(sp => sp.GetRequiredService<BusinessLogic>().GetCategoryActions());
+builder.Services.AddScoped<IProgressService>(sp => sp.GetRequiredService<BusinessLogic>().GetProgressActions());
+builder.Services.AddScoped<ILeaderboardService>(sp => sp.GetRequiredService<BusinessLogic>().GetLeaderboardActions());
 
 // CORS
 builder.Services.AddCors(options =>

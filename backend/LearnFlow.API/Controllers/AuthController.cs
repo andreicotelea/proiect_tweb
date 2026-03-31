@@ -16,9 +16,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
+    public IActionResult Login([FromBody] UserLoginDto dto)
     {
-        var user = await _auth.Login(dto.Email, dto.Password);
+        var user = _auth.Login(dto.Email, dto.Password);
         if (user == null)
             return Unauthorized(new { message = "Email sau parola incorecta" });
 
@@ -29,20 +29,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
+    public IActionResult Register([FromBody] UserRegisterDto dto)
     {
-        try
-        {
-            var user = await _auth.Register(dto);
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserRole", user.Role);
+        var result = _auth.Register(dto);
+        if (!result.IsSuccess)
+            return BadRequest(new { message = result.Message });
 
-            return Ok(new { data = new { user }, message = "Inregistrare reusita" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        return Ok(new { message = result.Message });
     }
 
     [HttpPost("logout")]
@@ -53,13 +46,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("me")]
-    public async Task<IActionResult> Me()
+    public IActionResult Me()
     {
         var userId = HttpContext.Session.GetInt32("UserId");
         if (userId == null)
             return Unauthorized(new { message = "Nu esti autentificat" });
 
-        var user = await _auth.GetCurrentUser(userId.Value);
+        var user = _auth.GetById(userId.Value);
         if (user == null)
             return NotFound(new { message = "Utilizatorul nu a fost gasit" });
 

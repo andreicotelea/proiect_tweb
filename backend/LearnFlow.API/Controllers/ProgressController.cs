@@ -16,16 +16,16 @@ public class ProgressController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<IActionResult> GetByUser(int userId)
+    public IActionResult GetByUser(int userId)
     {
-        var data = await _progress.GetByUser(userId);
+        var data = _progress.GetByUser(userId);
         return Ok(new { data });
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromBody] UpdateProgressDto dto)
+    public IActionResult Update([FromBody] UpdateProgressDto dto)
     {
-        var data = await _progress.UpdateProgress(dto);
-        return Ok(new { data });
+        var result = _progress.UpdateProgress(dto);
+        return Ok(new { message = result.Message });
     }
 }

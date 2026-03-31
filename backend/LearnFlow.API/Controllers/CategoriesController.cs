@@ -16,36 +16,36 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public IActionResult GetAll()
     {
-        var data = await _categories.GetAll();
+        var data = _categories.GetAll();
         return Ok(new { data });
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
+    public IActionResult Create([FromBody] CreateCategoryDto dto)
     {
-        var category = await _categories.Create(dto);
-        return Ok(new { data = category, message = "Categorie creata" });
+        var result = _categories.Create(dto);
+        return Ok(new { message = result.Message });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CreateCategoryDto dto)
+    public IActionResult Update(int id, [FromBody] CreateCategoryDto dto)
     {
-        var category = await _categories.Update(id, dto);
-        if (category == null)
-            return NotFound(new { message = "Categoria nu a fost gasita" });
+        var result = _categories.Update(id, dto);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { data = category, message = "Categorie actualizata" });
+        return Ok(new { message = result.Message });
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public IActionResult Delete(int id)
     {
-        var deleted = await _categories.Delete(id);
-        if (!deleted)
-            return NotFound(new { message = "Categoria nu a fost gasita" });
+        var result = _categories.Delete(id);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { message = "Categorie stearsa" });
+        return Ok(new { message = result.Message });
     }
 }

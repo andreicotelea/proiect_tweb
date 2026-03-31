@@ -16,16 +16,16 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public IActionResult GetAll()
     {
-        var data = await _users.GetAll();
+        var data = _users.GetAll();
         return Ok(new { data });
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public IActionResult GetById(int id)
     {
-        var user = await _users.GetById(id);
+        var user = _users.GetById(id);
         if (user == null)
             return NotFound(new { message = "Utilizatorul nu a fost gasit" });
 
@@ -33,22 +33,22 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UserDto dto)
+    public IActionResult Update(int id, [FromBody] UserDto dto)
     {
-        var user = await _users.Update(id, dto);
-        if (user == null)
-            return NotFound(new { message = "Utilizatorul nu a fost gasit" });
+        var result = _users.Update(id, dto);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { data = user, message = "Utilizator actualizat" });
+        return Ok(new { message = result.Message });
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public IActionResult Delete(int id)
     {
-        var deleted = await _users.Delete(id);
-        if (!deleted)
-            return NotFound(new { message = "Utilizatorul nu a fost gasit" });
+        var result = _users.Delete(id);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { message = "Utilizator sters" });
+        return Ok(new { message = result.Message });
     }
 }

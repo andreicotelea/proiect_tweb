@@ -16,19 +16,19 @@ public class LessonsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(
+    public IActionResult GetAll(
         [FromQuery] string? category,
         [FromQuery] string? difficulty,
         [FromQuery] string? search)
     {
-        var data = await _lessons.GetAll(category, difficulty, search);
+        var data = _lessons.GetAll(category, difficulty, search);
         return Ok(new { data });
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public IActionResult GetById(int id)
     {
-        var lesson = await _lessons.GetById(id);
+        var lesson = _lessons.GetById(id);
         if (lesson == null)
             return NotFound(new { message = "Lectia nu a fost gasita" });
 
@@ -36,29 +36,29 @@ public class LessonsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateLessonDto dto)
+    public IActionResult Create([FromBody] CreateLessonDto dto)
     {
-        var lesson = await _lessons.Create(dto);
-        return Ok(new { data = lesson, message = "Lectie creata cu succes" });
+        var result = _lessons.Create(dto);
+        return Ok(new { message = result.Message });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateLessonDto dto)
+    public IActionResult Update(int id, [FromBody] UpdateLessonDto dto)
     {
-        var lesson = await _lessons.Update(id, dto);
-        if (lesson == null)
-            return NotFound(new { message = "Lectia nu a fost gasita" });
+        var result = _lessons.Update(id, dto);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { data = lesson, message = "Lectie actualizata" });
+        return Ok(new { message = result.Message });
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public IActionResult Delete(int id)
     {
-        var deleted = await _lessons.Delete(id);
-        if (!deleted)
-            return NotFound(new { message = "Lectia nu a fost gasita" });
+        var result = _lessons.Delete(id);
+        if (!result.IsSuccess)
+            return NotFound(new { message = result.Message });
 
-        return Ok(new { message = "Lectie stearsa" });
+        return Ok(new { message = result.Message });
     }
 }

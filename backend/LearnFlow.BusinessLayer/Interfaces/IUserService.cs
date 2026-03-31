@@ -1,11 +1,12 @@
 using LearnFlow.Domain.Models.User;
+using LearnFlow.Domain.Models.Responses;
 
 namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface IUserService
 {
-    Task<List<UserDto>> GetAll();
-    Task<UserDto?> GetById(int id);
-    Task<UserDto?> Update(int id, UserDto dto);
-    Task<bool> Delete(int id);
+    List<UserDto> GetAll();
+    UserDto? GetById(int id);
+    ActionResponse Update(int id, UserDto dto);
+    ActionResponse Delete(int id);
 }

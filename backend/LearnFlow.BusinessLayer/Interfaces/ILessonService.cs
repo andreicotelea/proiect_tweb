@@ -1,12 +1,13 @@
 using LearnFlow.Domain.Models.Lesson;
+using LearnFlow.Domain.Models.Responses;
 
 namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface ILessonService
 {
-    Task<List<LessonDto>> GetAll(string? category, string? difficulty, string? search);
-    Task<LessonDto?> GetById(int id);
-    Task<LessonDto> Create(CreateLessonDto dto);
-    Task<LessonDto?> Update(int id, UpdateLessonDto dto);
-    Task<bool> Delete(int id);
+    List<LessonDto> GetAll(string? category, string? difficulty, string? search);
+    LessonDto? GetById(int id);
+    ActionResponse Create(CreateLessonDto dto);
+    ActionResponse Update(int id, UpdateLessonDto dto);
+    ActionResponse Delete(int id);
 }

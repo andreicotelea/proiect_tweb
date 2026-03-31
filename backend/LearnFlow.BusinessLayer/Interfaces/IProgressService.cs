@@ -1,9 +1,10 @@
 using LearnFlow.Domain.Models.Progress;
+using LearnFlow.Domain.Models.Responses;
 
 namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface IProgressService
 {
-    Task<List<ProgressDto>> GetByUser(int userId);
-    Task<ProgressDto> UpdateProgress(UpdateProgressDto dto);
+    List<ProgressDto> GetByUser(int userId);
+    ActionResponse UpdateProgress(UpdateProgressDto dto);
 }
