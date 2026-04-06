@@ -5,7 +5,7 @@ namespace LearnFlow.BusinessLayer.Interfaces;
 
 public interface IAuthService
 {
-    UserDto? Login(string email, string password);
+    LoginResponseDto? Login(UserLoginDto dto);
     ActionResponse Register(UserRegisterDto dto);
     UserDto? GetById(int id);
 }

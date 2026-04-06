@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.User;
+using LearnFlow.Domain.Models.Responses;
 using LearnFlow.BusinessLayer;
 
 namespace LearnFlow.API.Controller
@@ -17,13 +18,18 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost("login")]
-        public IActionResult Login(UserLoginDto dto)
+        public IActionResult Login([FromBody] UserLoginDto dto)
         {
-            var user = _auth.Login(dto.Email, dto.Password);
-            if (user == null)
-                return Unauthorized(new { message = "Email sau parola incorecta" });
+            var result = _auth.Login(dto);
 
-            return Ok(new { data = user, message = "Conectare reusita" });
+            if (result == null)
+                return Unauthorized(new ActionResponse
+                {
+                    IsSuccess = false,
+                    Message = "Email sau parola incorecta"
+                });
+
+            return Ok(result);
         }
 
         [HttpPost("register")]

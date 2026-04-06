@@ -2,21 +2,56 @@ using LearnFlow.Domain.Models.User;
 using LearnFlow.Domain.Models.Responses;
 using LearnFlow.DataAccessLayer.Context;
 using LearnFlow.Domain.Entities.User;
+using LearnFlow.Domain.Settings;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace LearnFlow.BusinessLayer.Core
 {
     public class AuthService : Interfaces.IAuthService
     {
-        public UserDto? Login(string email, string password)
+        private string GenerateToken(UserData user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(JwtSettings.Key));
+
+            var token = new JwtSecurityToken(
+                issuer: JwtSettings.Issuer,
+                audience: JwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(JwtSettings.ExpireMinutes),
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public LoginResponseDto? Login(UserLoginDto dto)
         {
             using var context = new AppDbContext();
-            var user = context.Users.FirstOrDefault(u => u.Email == email);
-            if (user == null) return null;
 
-            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            var user = context.Users.FirstOrDefault(u => u.Email == dto.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return null;
 
-            return MapToDto(user);
+            var token = GenerateToken(user);
+
+            return new LoginResponseDto
+            {
+                Token = token,
+                User = MapToDto(user)
+            };
         }
 
         public ActionResponse Register(UserRegisterDto dto)
