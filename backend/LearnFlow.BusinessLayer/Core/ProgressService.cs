@@ -9,7 +9,7 @@ namespace LearnFlow.BusinessLayer.Core
     {
         public List<ProgressDto> GetByUser(int userId)
         {
-            using var context = new ProgressContext();
+            using var context = new AppDbContext();
             return context.UserProgress
                 .Where(p => p.UserId == userId)
                 .Select(p => new ProgressDto
@@ -24,7 +24,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse UpdateProgress(UpdateProgressDto dto)
         {
-            using var context = new ProgressContext();
+            using var context = new AppDbContext();
             var existing = context.UserProgress
                 .FirstOrDefault(p => p.UserId == dto.UserId && p.LessonId == dto.LessonId);
 

@@ -10,7 +10,7 @@ namespace LearnFlow.BusinessLayer.Core
     {
         public List<LessonDto> GetAll(string? category, string? difficulty, string? search)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var query = context.Lessons.Include(l => l.Category).AsQueryable();
 
             if (!string.IsNullOrEmpty(category))
@@ -25,14 +25,14 @@ namespace LearnFlow.BusinessLayer.Core
 
         public LessonDto? GetById(int id)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.Include(l => l.Category).FirstOrDefault(l => l.Id == id);
             return lesson == null ? null : MapToDto(lesson);
         }
 
         public ActionResponse Create(CreateLessonDto dto)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = new LessonData
             {
                 Title = dto.Title,
@@ -53,7 +53,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse Update(int id, UpdateLessonDto dto)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
@@ -74,7 +74,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse Delete(int id)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };

@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using LearnFlow.Domain.Models.Leaderboard;
 using LearnFlow.DataAccessLayer.Context;
 
@@ -8,11 +7,10 @@ namespace LearnFlow.BusinessLayer.Core
     {
         public List<LeaderboardEntryDto> GetLeaderboard()
         {
-            using var context = new UserContext();
-            var users = context.Users.ToList();
+            using var context = new AppDbContext();
 
-            using var progressContext = new ProgressContext();
-            var allProgress = progressContext.UserProgress.ToList();
+            var users = context.Users.ToList();
+            var allProgress = context.UserProgress.ToList();
 
             return users
                 .Where(u => u.Role == "student")

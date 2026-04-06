@@ -8,7 +8,7 @@ namespace LearnFlow.BusinessLayer.Core
     {
         public List<UserDto> GetAll()
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             return context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
@@ -22,7 +22,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public UserDto? GetById(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
 
@@ -39,7 +39,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse Update(int id, UserDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
@@ -55,7 +55,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse Delete(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };

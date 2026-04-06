@@ -9,7 +9,7 @@ namespace LearnFlow.BusinessLayer.Core
     {
         public UserDto? Login(string email, string password)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Email == email);
             if (user == null) return null;
 
@@ -21,7 +21,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public ActionResponse Register(UserRegisterDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
 
             if (context.Users.Any(u => u.Email == dto.Email))
                 return new ActionResponse { IsSuccess = false, Message = "Un cont cu acest email exista deja." };
@@ -43,7 +43,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         public UserDto? GetById(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             return user == null ? null : MapToDto(user);
         }
