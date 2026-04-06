@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.User;
 using LearnFlow.BusinessLayer;
@@ -6,6 +7,7 @@ namespace LearnFlow.API.Controller
 {
     [Route("api/users")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly BusinessLayer.Interfaces.IUserService _users;
@@ -17,6 +19,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult GetAll()
         {
             var data = _users.GetAll();
@@ -24,6 +27,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var user = _users.GetById(id);
@@ -34,6 +38,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(int id, UserDto dto)
         {
             var result = _users.Update(id, dto);
@@ -42,6 +47,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
             var result = _users.Delete(id);

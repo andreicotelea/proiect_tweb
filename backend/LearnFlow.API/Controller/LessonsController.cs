@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.Lesson;
 using LearnFlow.BusinessLayer;
@@ -6,6 +7,7 @@ namespace LearnFlow.API.Controller
 {
     [Route("api/lessons")]
     [ApiController]
+    [Authorize]
     public class LessonsController : ControllerBase
     {
         private readonly BusinessLayer.Interfaces.ILessonService _lessons;
@@ -17,6 +19,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll(
             [FromQuery] string? category,
             [FromQuery] string? difficulty,
@@ -27,6 +30,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var lesson = _lessons.GetById(id);
@@ -37,6 +41,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Create(CreateLessonDto dto)
         {
             var result = _lessons.Create(dto);
@@ -45,6 +50,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(int id, UpdateLessonDto dto)
         {
             var result = _lessons.Update(id, dto);
@@ -53,6 +59,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
             var result = _lessons.Delete(id);

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.Category;
 using LearnFlow.BusinessLayer;
@@ -6,6 +7,7 @@ namespace LearnFlow.API.Controller
 {
     [Route("api/categories")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly BusinessLayer.Interfaces.ICategoryService _categories;
@@ -17,6 +19,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             var data = _categories.GetAll();
@@ -24,6 +27,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Create(CreateCategoryDto dto)
         {
             var result = _categories.Create(dto);
@@ -32,6 +36,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(int id, CreateCategoryDto dto)
         {
             var result = _categories.Update(id, dto);
@@ -40,6 +45,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
             var result = _categories.Delete(id);

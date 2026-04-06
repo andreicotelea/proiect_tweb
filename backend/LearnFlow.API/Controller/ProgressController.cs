@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.Progress;
 using LearnFlow.BusinessLayer;
@@ -6,6 +7,7 @@ namespace LearnFlow.API.Controller
 {
     [Route("api/progress")]
     [ApiController]
+    [Authorize]
     public class ProgressController : ControllerBase
     {
         private readonly BusinessLayer.Interfaces.IProgressService _progress;
