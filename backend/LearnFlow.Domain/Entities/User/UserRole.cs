@@ -1,4 +1,4 @@
-namespace LearnFlow.Domain.Enums
+namespace LearnFlow.Domain.Entities.User
 {
     public enum UserRole
     {
