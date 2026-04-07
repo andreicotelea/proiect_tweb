@@ -15,7 +15,7 @@ namespace LearnFlow.API.Controller
         public CategoriesController()
         {
             var bl = new BusinessLogic();
-            _categories = bl.GetCategoryActions();
+            _categories = bl.CategoryAction();
         }
 
         [HttpGet]

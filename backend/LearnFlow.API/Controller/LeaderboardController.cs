@@ -12,7 +12,7 @@ namespace LearnFlow.API.Controller
         public LeaderboardController()
         {
             var bl = new BusinessLogic();
-            _leaderboard = bl.GetLeaderboardActions();
+            _leaderboard = bl.LeaderboardAction();
         }
 
         [HttpGet]

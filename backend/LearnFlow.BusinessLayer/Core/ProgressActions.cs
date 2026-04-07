@@ -5,11 +5,13 @@ using LearnFlow.Domain.Entities.Progress;
 
 namespace LearnFlow.BusinessLayer.Core
 {
-    public class ProgressService : Interfaces.IProgressService
+    public abstract class ProgressActions
     {
-        public List<ProgressDto> GetByUser(int userId)
+        protected ProgressActions() { }
+
+        protected List<ProgressDto> GetByUserActionExecution(int userId)
         {
-            using var context = new AppDbContext();
+            using var context = new ProgressContext();
             return context.UserProgress
                 .Where(p => p.UserId == userId)
                 .Select(p => new ProgressDto
@@ -22,12 +24,11 @@ namespace LearnFlow.BusinessLayer.Core
                 }).ToList();
         }
 
-        public ActionResponse UpdateProgress(UpdateProgressDto dto)
+        protected ActionResponse UpdateProgressActionExecution(UpdateProgressDto dto)
         {
-            using var context = new AppDbContext();
+            using var context = new ProgressContext();
             var existing = context.UserProgress
                 .FirstOrDefault(p => p.UserId == dto.UserId && p.LessonId == dto.LessonId);
-
             if (existing == null)
             {
                 existing = new UserProgressData
@@ -44,10 +45,8 @@ namespace LearnFlow.BusinessLayer.Core
                 existing.PercentComplete = dto.Percent;
                 existing.LastAccessedAt = DateTime.UtcNow;
             }
-
             if (dto.Percent >= 100)
                 existing.CompletedAt = DateTime.UtcNow;
-
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Progres actualizat." };
         }

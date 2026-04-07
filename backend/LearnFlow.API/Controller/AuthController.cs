@@ -14,7 +14,7 @@ namespace LearnFlow.API.Controller
         public AuthController()
         {
             var bl = new BusinessLogic();
-            _auth = bl.GetAuthActions();
+            _auth = bl.AuthAction();
         }
 
         [HttpPost("login")]

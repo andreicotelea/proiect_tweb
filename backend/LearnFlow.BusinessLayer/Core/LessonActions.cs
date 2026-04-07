@@ -6,33 +6,33 @@ using LearnFlow.Domain.Entities.Lesson;
 
 namespace LearnFlow.BusinessLayer.Core
 {
-    public class LessonService : Interfaces.ILessonService
+    public abstract class LessonActions
     {
-        public List<LessonDto> GetAll(string? category, string? difficulty, string? search)
-        {
-            using var context = new AppDbContext();
-            var query = context.Lessons.Include(l => l.Category).AsQueryable();
+        protected LessonActions() { }
 
+        protected List<LessonDto> GetAllActionExecution(string? category, string? difficulty, string? search)
+        {
+            using var context = new LessonContext();
+            var query = context.Lessons.Include(l => l.Category).AsQueryable();
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(l => l.Category.Name == category);
             if (!string.IsNullOrEmpty(difficulty))
                 query = query.Where(l => l.Difficulty == difficulty);
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(l => l.Title.Contains(search));
-
             return query.Select(l => MapToDto(l)).ToList();
         }
 
-        public LessonDto? GetById(int id)
+        protected LessonDto? GetByIdActionExecution(int id)
         {
-            using var context = new AppDbContext();
+            using var context = new LessonContext();
             var lesson = context.Lessons.Include(l => l.Category).FirstOrDefault(l => l.Id == id);
             return lesson == null ? null : MapToDto(lesson);
         }
 
-        public ActionResponse Create(CreateLessonDto dto)
+        protected ActionResponse CreateActionExecution(CreateLessonDto dto)
         {
-            using var context = new AppDbContext();
+            using var context = new LessonContext();
             var lesson = new LessonData
             {
                 Title = dto.Title,
@@ -51,13 +51,12 @@ namespace LearnFlow.BusinessLayer.Core
             return new ActionResponse { IsSuccess = true, Message = "Lectie creata cu succes." };
         }
 
-        public ActionResponse Update(int id, UpdateLessonDto dto)
+        protected ActionResponse UpdateActionExecution(int id, UpdateLessonDto dto)
         {
-            using var context = new AppDbContext();
+            using var context = new LessonContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
-
             if (dto.Title != null) lesson.Title = dto.Title;
             if (dto.Description != null) lesson.Description = dto.Description;
             if (dto.CategoryId.HasValue) lesson.CategoryId = dto.CategoryId.Value;
@@ -67,18 +66,16 @@ namespace LearnFlow.BusinessLayer.Core
             if (dto.Thumbnail != null) lesson.Thumbnail = dto.Thumbnail;
             if (dto.VideoUrl != null) lesson.VideoUrl = dto.VideoUrl;
             if (dto.IsLocked.HasValue) lesson.IsLocked = dto.IsLocked.Value;
-
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Lectie actualizata." };
         }
 
-        public ActionResponse Delete(int id)
+        protected ActionResponse DeleteActionExecution(int id)
         {
-            using var context = new AppDbContext();
+            using var context = new LessonContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
-
             context.Lessons.Remove(lesson);
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Lectie stearsa." };

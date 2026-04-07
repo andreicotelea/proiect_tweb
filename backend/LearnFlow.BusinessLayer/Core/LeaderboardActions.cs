@@ -3,14 +3,17 @@ using LearnFlow.DataAccessLayer.Context;
 
 namespace LearnFlow.BusinessLayer.Core
 {
-    public class LeaderboardService : Interfaces.ILeaderboardService
+    public abstract class LeaderboardActions
     {
-        public List<LeaderboardEntryDto> GetLeaderboard()
-        {
-            using var context = new AppDbContext();
+        protected LeaderboardActions() { }
 
-            var users = context.Users.ToList();
-            var allProgress = context.UserProgress.ToList();
+        protected List<LeaderboardEntryDto> GetLeaderboardActionExecution()
+        {
+            using var userContext = new UserContext();
+            using var progressContext = new ProgressContext();
+
+            var users = userContext.Users.ToList();
+            var allProgress = progressContext.UserProgress.ToList();
 
             return users
                 .Where(u => u.Role == "student")

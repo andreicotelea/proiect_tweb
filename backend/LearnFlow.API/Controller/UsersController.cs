@@ -15,7 +15,7 @@ namespace LearnFlow.API.Controller
         public UsersController()
         {
             var bl = new BusinessLogic();
-            _users = bl.GetUserActions();
+            _users = bl.UserAction();
         }
 
         [HttpGet]

@@ -15,7 +15,7 @@ namespace LearnFlow.API.Controller
         public LessonsController()
         {
             var bl = new BusinessLogic();
-            _lessons = bl.GetLessonActions();
+            _lessons = bl.LessonAction();
         }
 
         [HttpGet]

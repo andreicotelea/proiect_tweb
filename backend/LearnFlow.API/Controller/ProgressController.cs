@@ -15,7 +15,7 @@ namespace LearnFlow.API.Controller
         public ProgressController()
         {
             var bl = new BusinessLogic();
-            _progress = bl.GetProgressActions();
+            _progress = bl.ProgressAction();
         }
 
         [HttpGet("{userId}")]

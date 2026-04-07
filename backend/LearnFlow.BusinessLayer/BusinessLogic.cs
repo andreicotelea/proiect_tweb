@@ -1,15 +1,15 @@
 using LearnFlow.BusinessLayer.Interfaces;
-using LearnFlow.BusinessLayer.Core;
+using LearnFlow.BusinessLayer.Structure;
 
 namespace LearnFlow.BusinessLayer
 {
     public class BusinessLogic
     {
-        public IAuthService GetAuthActions() => new AuthService();
-        public ILessonService GetLessonActions() => new LessonService();
-        public IUserService GetUserActions() => new UserService();
-        public ICategoryService GetCategoryActions() => new CategoryService();
-        public IProgressService GetProgressActions() => new ProgressService();
-        public ILeaderboardService GetLeaderboardActions() => new LeaderboardService();
+        public IAuthService AuthAction() => new AuthActionExecution();
+        public ILessonService LessonAction() => new LessonActionExecution();
+        public IUserService UserAction() => new UserActionExecution();
+        public ICategoryService CategoryAction() => new CategoryActionExecution();
+        public IProgressService ProgressAction() => new ProgressActionExecution();
+        public ILeaderboardService LeaderboardAction() => new LeaderboardActionExecution();
     }
 }

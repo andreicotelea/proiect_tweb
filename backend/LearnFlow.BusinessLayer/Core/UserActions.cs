@@ -4,11 +4,13 @@ using LearnFlow.DataAccessLayer.Context;
 
 namespace LearnFlow.BusinessLayer.Core
 {
-    public class UserService : Interfaces.IUserService
+    public abstract class UserActions
     {
-        public List<UserDto> GetAll()
+        protected UserActions() { }
+
+        protected List<UserDto> GetAllActionExecution()
         {
-            using var context = new AppDbContext();
+            using var context = new UserContext();
             return context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
@@ -20,12 +22,11 @@ namespace LearnFlow.BusinessLayer.Core
             }).ToList();
         }
 
-        public UserDto? GetById(int id)
+        protected UserDto? GetByIdActionExecution(int id)
         {
-            using var context = new AppDbContext();
+            using var context = new UserContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
-
             return new UserDto
             {
                 Id = user.Id,
@@ -37,32 +38,28 @@ namespace LearnFlow.BusinessLayer.Core
             };
         }
 
-        public ActionResponse Update(int id, UserDto dto)
+        protected ActionResponse UpdateActionExecution(int id, UserDto dto)
         {
-            using var context = new AppDbContext();
+            using var context = new UserContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
-
             user.Name = dto.Name;
             user.Email = dto.Email;
             user.Role = dto.Role;
             user.Avatar = dto.Avatar;
             context.SaveChanges();
-
             return new ActionResponse { IsSuccess = true, Message = "Utilizator actualizat." };
         }
 
-        public ActionResponse Delete(int id)
+        protected ActionResponse DeleteActionExecution(int id)
         {
-            using var context = new AppDbContext();
+            using var context = new UserContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
-
             context.Users.Remove(user);
             context.SaveChanges();
-
             return new ActionResponse { IsSuccess = true, Message = "Utilizator sters." };
         }
     }
