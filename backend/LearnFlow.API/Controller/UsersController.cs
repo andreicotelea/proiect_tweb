@@ -1,7 +1,6 @@
+using LearnFlow.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LearnFlow.Domain.Models.User;
-using LearnFlow.BusinessLayer;
 
 namespace LearnFlow.API.Controller
 {
@@ -10,11 +9,11 @@ namespace LearnFlow.API.Controller
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly BusinessLayer.Interfaces.IUserService _users;
+        internal BusinessLayer.Interfaces.IUserService _users;
 
         public UsersController()
         {
-            var bl = new BusinessLogic();
+            var bl = new BusinessLayer.BusinessLogic();
             _users = bl.UserAction();
         }
 
@@ -23,7 +22,7 @@ namespace LearnFlow.API.Controller
         public IActionResult GetAll()
         {
             var data = _users.GetAll();
-            return Ok(new { data });
+            return Ok(data);
         }
 
         [HttpGet("{id}")]
@@ -32,17 +31,17 @@ namespace LearnFlow.API.Controller
         {
             var user = _users.GetById(id);
             if (user == null)
-                return NotFound(new { message = "Utilizatorul nu a fost gasit" });
+                return NotFound();
 
-            return Ok(new { data = user });
+            return Ok(user);
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
-        public IActionResult Update(int id, UserDto dto)
+        public IActionResult Update(int id, [FromBody] UserDto dto)
         {
             var result = _users.Update(id, dto);
-            if (!result.IsSuccess) return BadRequest(result.Message);
+            if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
 
@@ -51,7 +50,7 @@ namespace LearnFlow.API.Controller
         public IActionResult Delete(int id)
         {
             var result = _users.Delete(id);
-            if (!result.IsSuccess) return BadRequest(result.Message);
+            if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
     }

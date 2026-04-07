@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using LearnFlow.BusinessLayer;
 
 namespace LearnFlow.API.Controller
 {
@@ -7,11 +6,11 @@ namespace LearnFlow.API.Controller
     [ApiController]
     public class LeaderboardController : ControllerBase
     {
-        private readonly BusinessLayer.Interfaces.ILeaderboardService _leaderboard;
+        internal BusinessLayer.Interfaces.ILeaderboardService _leaderboard;
 
         public LeaderboardController()
         {
-            var bl = new BusinessLogic();
+            var bl = new BusinessLayer.BusinessLogic();
             _leaderboard = bl.LeaderboardAction();
         }
 
@@ -19,7 +18,7 @@ namespace LearnFlow.API.Controller
         public IActionResult Get()
         {
             var data = _leaderboard.GetLeaderboard();
-            return Ok(new { data });
+            return Ok(data);
         }
     }
 }

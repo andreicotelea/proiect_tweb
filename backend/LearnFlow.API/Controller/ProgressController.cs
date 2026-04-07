@@ -1,7 +1,6 @@
+using LearnFlow.Domain.Models.Progress;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LearnFlow.Domain.Models.Progress;
-using LearnFlow.BusinessLayer;
 
 namespace LearnFlow.API.Controller
 {
@@ -10,11 +9,11 @@ namespace LearnFlow.API.Controller
     [Authorize]
     public class ProgressController : ControllerBase
     {
-        private readonly BusinessLayer.Interfaces.IProgressService _progress;
+        internal BusinessLayer.Interfaces.IProgressService _progress;
 
         public ProgressController()
         {
-            var bl = new BusinessLogic();
+            var bl = new BusinessLayer.BusinessLogic();
             _progress = bl.ProgressAction();
         }
 
@@ -22,14 +21,14 @@ namespace LearnFlow.API.Controller
         public IActionResult GetByUser(int userId)
         {
             var data = _progress.GetByUser(userId);
-            return Ok(new { data });
+            return Ok(data);
         }
 
         [HttpPost]
-        public IActionResult Update(UpdateProgressDto dto)
+        public IActionResult Update([FromBody] UpdateProgressDto dto)
         {
             var result = _progress.UpdateProgress(dto);
-            if (!result.IsSuccess) return BadRequest(result.Message);
+            if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
     }

@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using LearnFlow.Domain.Models.User;
 using LearnFlow.Domain.Models.Responses;
-using LearnFlow.BusinessLayer;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LearnFlow.API.Controller
 {
@@ -9,11 +8,11 @@ namespace LearnFlow.API.Controller
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly BusinessLayer.Interfaces.IAuthService _auth;
+        internal BusinessLayer.Interfaces.IAuthService _auth;
 
         public AuthController()
         {
-            var bl = new BusinessLogic();
+            var bl = new BusinessLayer.BusinessLogic();
             _auth = bl.AuthAction();
         }
 
@@ -33,11 +32,12 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost("register")]
-        public IActionResult Register(UserRegisterDto dto)
+        public IActionResult Register([FromBody] UserRegisterDto dto)
         {
             var result = _auth.Register(dto);
+
             if (!result.IsSuccess)
-                return BadRequest(new { message = result.Message });
+                return BadRequest(result);
 
             return Ok(result);
         }
@@ -49,7 +49,7 @@ namespace LearnFlow.API.Controller
             if (user == null)
                 return NotFound(new { message = "Utilizatorul nu a fost gasit" });
 
-            return Ok(new { data = user });
+            return Ok(user);
         }
     }
 }
