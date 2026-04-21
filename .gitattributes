@@ -1,0 +1,30 @@
+# Normalize line endings for all text files
+* text=auto eol=lf
+
+# Explicit text files
+*.cs       text eol=lf
+*.csproj   text eol=lf
+*.sln      text eol=crlf
+*.json     text eol=lf
+*.md       text eol=lf
+*.ts       text eol=lf
+*.tsx      text eol=lf
+*.js       text eol=lf
+*.jsx      text eol=lf
+*.css      text eol=lf
+*.html     text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.xml      text eol=lf
+*.config   text eol=lf
+
+# Binary files
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.svg      text eol=lf
+*.dll      binary
+*.exe      binary
+*.pdb      binary
