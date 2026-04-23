@@ -67,7 +67,7 @@ export default function LessonDetailPage() {
           <div className="animate-in delay-3">
             <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 10, letterSpacing: '-0.4px' }}>{l.title}</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18, fontSize: 12.5, color: colors.textMuted }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><User size={13} /> {l.instructor}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><User size={13} /> {l.profesor}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Clock size={13} /> {l.duration}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Star size={13} color={colors.blush} fill={colors.blush} /> {l.rating}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Users size={13} /> {l.students} studenti</span>

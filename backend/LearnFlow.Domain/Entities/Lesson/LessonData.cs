@@ -31,7 +31,7 @@ public class LessonData
     public int StudentCount { get; set; } = 0;
 
     [StringLength(100)]
-    public string InstructorName { get; set; } = string.Empty;
+    public string ProfesorName { get; set; } = string.Empty;
 
     [StringLength(10)]
     public string Thumbnail { get; set; } = "DF";

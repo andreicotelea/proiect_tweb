@@ -7,7 +7,7 @@ namespace LearnFlow.Domain.Models.Lesson
         public int? CategoryId { get; set; }
         public string? Difficulty { get; set; }
         public string? Duration { get; set; }
-        public string? InstructorName { get; set; }
+        public string? ProfesorName { get; set; }
         public string? Thumbnail { get; set; }
         public string? VideoUrl { get; set; }
         public bool? IsLocked { get; set; }

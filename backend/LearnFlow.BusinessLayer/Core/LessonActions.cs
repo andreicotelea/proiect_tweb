@@ -40,7 +40,7 @@ namespace LearnFlow.BusinessLayer.Core
                 CategoryId = dto.CategoryId,
                 Difficulty = dto.Difficulty,
                 Duration = dto.Duration,
-                InstructorName = dto.InstructorName,
+                ProfesorName = dto.ProfesorName,
                 Thumbnail = dto.Thumbnail,
                 VideoUrl = dto.VideoUrl,
                 IsLocked = dto.IsLocked,
@@ -62,7 +62,7 @@ namespace LearnFlow.BusinessLayer.Core
             if (dto.CategoryId.HasValue) lesson.CategoryId = dto.CategoryId.Value;
             if (dto.Difficulty != null) lesson.Difficulty = dto.Difficulty;
             if (dto.Duration != null) lesson.Duration = dto.Duration;
-            if (dto.InstructorName != null) lesson.InstructorName = dto.InstructorName;
+            if (dto.ProfesorName != null) lesson.ProfesorName = dto.ProfesorName;
             if (dto.Thumbnail != null) lesson.Thumbnail = dto.Thumbnail;
             if (dto.VideoUrl != null) lesson.VideoUrl = dto.VideoUrl;
             if (dto.IsLocked.HasValue) lesson.IsLocked = dto.IsLocked.Value;
@@ -92,7 +92,7 @@ namespace LearnFlow.BusinessLayer.Core
             Duration = l.Duration,
             Rating = l.Rating,
             Students = l.StudentCount,
-            Instructor = l.InstructorName,
+            Profesor = l.ProfesorName,
             Thumbnail = l.Thumbnail,
             Locked = l.IsLocked,
             VideoUrl = l.VideoUrl,

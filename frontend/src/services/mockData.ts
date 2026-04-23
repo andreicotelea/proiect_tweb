@@ -1,14 +1,14 @@
 import type { Lesson, LeaderboardEntry, AdminStats, Achievement } from '@/types';
 
 export const mockLessons: Lesson[] = [
-  { id: 1, title: 'Introducere in React', category: 'Frontend', difficulty: 'Beginner', duration: '45 min', rating: 4.8, students: 1247, instructor: 'Ana Popescu', progress: 75, thumbnail: 'RE', locked: false },
-  { id: 2, title: 'Node.js Fundamentals', category: 'Backend', difficulty: 'Beginner', duration: '60 min', rating: 4.6, students: 983, instructor: 'Mihai Ion', progress: 30, thumbnail: 'NJ', locked: false },
-  { id: 3, title: 'PostgreSQL Advanced', category: 'Database', difficulty: 'Advanced', duration: '90 min', rating: 4.9, students: 562, instructor: 'Elena Radu', progress: 0, thumbnail: 'PG', locked: false },
-  { id: 4, title: 'Docker & Kubernetes', category: 'DevOps', difficulty: 'Intermediate', duration: '120 min', rating: 4.7, students: 834, instructor: 'Dan Vlad', progress: 100, thumbnail: 'DK', locked: false },
-  { id: 5, title: 'TypeScript Mastery', category: 'Frontend', difficulty: 'Intermediate', duration: '75 min', rating: 4.5, students: 1089, instructor: 'Ana Popescu', progress: 0, thumbnail: 'TS', locked: true },
-  { id: 6, title: 'Clean Architecture .NET', category: 'Backend', difficulty: 'Advanced', duration: '100 min', rating: 4.9, students: 421, instructor: 'Mihai Ion', progress: 0, thumbnail: 'CA', locked: true },
-  { id: 7, title: 'CSS Animations Deep Dive', category: 'Frontend', difficulty: 'Intermediate', duration: '55 min', rating: 4.3, students: 756, instructor: 'Elena Radu', progress: 50, thumbnail: 'CS', locked: false },
-  { id: 8, title: 'REST API Design', category: 'Backend', difficulty: 'Beginner', duration: '40 min', rating: 4.4, students: 1320, instructor: 'Dan Vlad', progress: 0, thumbnail: 'AP', locked: false },
+  { id: 1, title: 'Introducere in React', category: 'Frontend', difficulty: 'Beginner', duration: '45 min', rating: 4.8, students: 1247, profesor: 'Ana Popescu', progress: 75, thumbnail: 'RE', locked: false },
+  { id: 2, title: 'Node.js Fundamentals', category: 'Backend', difficulty: 'Beginner', duration: '60 min', rating: 4.6, students: 983, profesor: 'Mihai Ion', progress: 30, thumbnail: 'NJ', locked: false },
+  { id: 3, title: 'PostgreSQL Advanced', category: 'Database', difficulty: 'Advanced', duration: '90 min', rating: 4.9, students: 562, profesor: 'Elena Radu', progress: 0, thumbnail: 'PG', locked: false },
+  { id: 4, title: 'Docker & Kubernetes', category: 'DevOps', difficulty: 'Intermediate', duration: '120 min', rating: 4.7, students: 834, profesor: 'Dan Vlad', progress: 100, thumbnail: 'DK', locked: false },
+  { id: 5, title: 'TypeScript Mastery', category: 'Frontend', difficulty: 'Intermediate', duration: '75 min', rating: 4.5, students: 1089, profesor: 'Ana Popescu', progress: 0, thumbnail: 'TS', locked: true },
+  { id: 6, title: 'Clean Architecture .NET', category: 'Backend', difficulty: 'Advanced', duration: '100 min', rating: 4.9, students: 421, profesor: 'Mihai Ion', progress: 0, thumbnail: 'CA', locked: true },
+  { id: 7, title: 'CSS Animations Deep Dive', category: 'Frontend', difficulty: 'Intermediate', duration: '55 min', rating: 4.3, students: 756, profesor: 'Elena Radu', progress: 50, thumbnail: 'CS', locked: false },
+  { id: 8, title: 'REST API Design', category: 'Backend', difficulty: 'Beginner', duration: '40 min', rating: 4.4, students: 1320, profesor: 'Dan Vlad', progress: 0, thumbnail: 'AP', locked: false },
 ];
 
 export const mockLeaderboard: LeaderboardEntry[] = [

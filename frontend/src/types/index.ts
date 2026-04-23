@@ -1,7 +1,7 @@
 // =============================================
 // USER
 // =============================================
-export type UserRole = 'guest' | 'student' | 'instructor' | 'admin';
+export type UserRole = 'guest' | 'student' | 'profesor' | 'admin';
 
 export interface User {
   id: number;
@@ -28,7 +28,7 @@ export interface Lesson {
   duration: string;
   rating: number;
   students: number;
-  instructor: string;
+  profesor: string;
   progress: number;
   thumbnail: string;
   locked: boolean;

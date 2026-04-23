@@ -94,7 +94,7 @@ export default function LessonCard({ lesson: l, delay = 1, onClick }: LessonCard
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           marginTop: 12, paddingTop: 12, borderTop: `1px solid ${colors.border}`,
         }}>
-          <span style={{ fontSize: 11.5, color: colors.textMuted }}>{l.instructor}</span>
+          <span style={{ fontSize: 11.5, color: colors.textMuted }}>{l.profesor}</span>
           {!l.locked && (
             <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11.5, fontWeight: 600, color: colors.blue }}>
               {l.progress > 0 && l.progress < 100 ? 'Continuă' : l.progress === 100 ? 'Revezi' : 'Începe'}

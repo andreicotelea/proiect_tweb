@@ -4,7 +4,7 @@ namespace LearnFlow.Domain.Entities.User
     {
         Guest = 0,
         Student = 1,
-        Instructor = 10,
+        Profesor = 10,
         Admin = 20
     }
 }

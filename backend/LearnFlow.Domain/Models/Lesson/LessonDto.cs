@@ -11,7 +11,7 @@ namespace LearnFlow.Domain.Models.Lesson
         public string Duration { get; set; } = string.Empty;
         public double Rating { get; set; }
         public int Students { get; set; }
-        public string Instructor { get; set; } = string.Empty;
+        public string Profesor { get; set; } = string.Empty;
         public int Progress { get; set; }
         public string Thumbnail { get; set; } = string.Empty;
         public bool Locked { get; set; }
