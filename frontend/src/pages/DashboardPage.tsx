@@ -1,13 +1,50 @@
+import { useState, useEffect } from 'react';
 import { BookOpen, Clock, Zap, Trophy, Play, ChevronRight } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import { StatCard, LessonCard } from '@/components';
+import { lessonService, leaderboardService } from '@/api';
+import { USE_MOCK } from '@/config';
 import { mockLessons, mockLeaderboard } from '@/services/mockData';
+import type { Lesson, LeaderboardEntry } from '@/types';
 
 export default function DashboardPage() {
   const { colors } = useTheme();
   const navigate = useNavigate();
-  const inProgress = mockLessons.filter(l => l.progress > 0 && l.progress < 100);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (USE_MOCK) {
+      setLessons(mockLessons);
+      setLeaderboard(mockLeaderboard);
+      setLoading(false);
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const [lessonsRes, lbRes] = await Promise.all([
+          lessonService.getAll(),
+          leaderboardService.getAll(),
+        ]);
+        setLessons(lessonsRes.data as any);
+        setLeaderboard(lbRes.data as any);
+      } catch (err) {
+        console.error('Failed to fetch dashboard data:', err);
+        setLessons(mockLessons);
+        setLeaderboard(mockLeaderboard);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const inProgress = lessons.filter(l => l.progress > 0 && l.progress < 100);
+  const completed = lessons.filter(l => l.progress >= 100).length;
+
+  if (loading) return <div style={{ padding: 28, color: colors.textMuted }}>Se incarca...</div>;
 
   return (
     <div style={{ padding: 28 }}>
@@ -41,10 +78,10 @@ export default function DashboardPage() {
 
       {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <StatCard icon={BookOpen} label="Lectii Completate" value="12" trend={15} color={colors.blue} delay={2} />
-        <StatCard icon={Clock} label="Ore Invatate" value="34h" trend={8} color={colors.steel} delay={3} />
-        <StatCard icon={Zap} label="Serie Zilnica" value="7" trend={40} color={colors.blush} delay={4} />
-        <StatCard icon={Trophy} label="Puncte Totale" value="2,840" trend={12} color={colors.success} delay={5} />
+        <StatCard icon={BookOpen} label="Lectii Completate" value={String(completed)} trend={15} color={colors.blue} delay={2} />
+        <StatCard icon={Clock} label="Total Lectii" value={String(lessons.length)} trend={8} color={colors.steel} delay={3} />
+        <StatCard icon={Zap} label="In Progres" value={String(inProgress.length)} trend={40} color={colors.blush} delay={4} />
+        <StatCard icon={Trophy} label="Clasament" value={`${leaderboard.length} studenti`} trend={12} color={colors.success} delay={5} />
       </div>
 
       {/* In Progress Lessons */}
@@ -80,7 +117,7 @@ export default function DashboardPage() {
           </button>
         </div>
         <div style={{ background: colors.bgCard, borderRadius: 14, border: `1px solid ${colors.border}`, overflow: 'hidden' }}>
-          {mockLeaderboard.slice(0, 5).map((u, i) => {
+          {leaderboard.slice(0, 5).map((u, i) => {
             const podiumColors = [colors.blush, '#AAB8C2', '#A0866A'];
             return (
               <div key={i} style={{
