@@ -97,6 +97,20 @@ namespace LearnFlow.DataAccessLayer.Context
                 new CategoryData { Id = 5, Name = "Mobile", Description = "Dezvoltare aplicatii mobile", Icon = "MB" },
                 new CategoryData { Id = 6, Name = "AI/ML", Description = "Inteligenta artificiala si machine learning", Icon = "AI" }
             );
+
+            // Seed Admin User (password: admin)
+            modelBuilder.Entity<UserData>().HasData(
+                new UserData
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Email = "admin@learnflow.md",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"),
+                    Role = "admin",
+                    Avatar = "AD",
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
         }
     }
 }
