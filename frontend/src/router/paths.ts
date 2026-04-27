@@ -1,0 +1,30 @@
+export const ROUTES = {
+  HOME: '/',
+  DASHBOARD: '/dashboard',
+  LESSONS: '/lessons',
+  LESSON_DETAIL: '/lessons/:id',
+  LEADERBOARD: '/leaderboard',
+  PROFILE: '/profile',
+  SETTINGS: '/settings',
+  NOTIFICATIONS: '/notifications',
+  CERTIFICATES: '/certificates',
+  ADMIN: '/admin',
+  HEALTH: '/health',
+  LOGIN: '/login',
+  REGISTER: '/register',
+  ERROR: '/error',
+  NOT_FOUND: '*',
+} as const;
+
+export const ROUTE_SEGMENTS = {
+  DASHBOARD: 'dashboard',
+  LESSONS: 'lessons',
+  LESSON_DETAIL: 'lessons/:id',
+  LEADERBOARD: 'leaderboard',
+  PROFILE: 'profile',
+  SETTINGS: 'settings',
+  NOTIFICATIONS: 'notifications',
+  CERTIFICATES: 'certificates',
+  ADMIN: 'admin',
+  HEALTH: 'health',
+} as const;
