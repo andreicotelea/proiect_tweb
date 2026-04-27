@@ -1,15 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Play, User, Clock, Star, Users, FileText, MessageCircle, Edit, Check } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate, useParams } from 'react-router-dom';
+import { lessonService } from '@/api';
+import { USE_MOCK } from '@/config';
 import { mockLessons } from '@/services/mockData';
+import type { Lesson } from '@/types';
 
 export default function LessonDetailPage() {
   const { colors } = useTheme();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const l = mockLessons.find(lesson => lesson.id === Number(id)) ?? null;
+  const [l, setL] = useState<Lesson | null>(null);
   const [tab, setTab] = useState('content');
+
+  useEffect(() => {
+    const numId = Number(id);
+    if (USE_MOCK) {
+      setL(mockLessons.find(lesson => lesson.id === numId) ?? null);
+      return;
+    }
+    lessonService.getById(numId)
+      .then(res => setL(res.data as any))
+      .catch(() => setL(mockLessons.find(lesson => lesson.id === numId) ?? null));
+  }, [id]);
 
   if (!l) return null;
 

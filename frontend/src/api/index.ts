@@ -6,3 +6,5 @@ export { progressService } from './progress';
 export { leaderboardService } from './leaderboard';
 export { adminService } from './admin';
 export { healthService } from './health';
+export { notificationService } from './notificationService';
+export { achievementService } from './achievementService';
