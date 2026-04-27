@@ -74,6 +74,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<LearnFlow.API.Extensions.GlobalExceptionMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
