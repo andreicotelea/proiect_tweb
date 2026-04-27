@@ -19,10 +19,10 @@ export default function LoginPage() {
     return null;
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError('');
     setLoading(true);
-    const result = loginWithCredentials(email, password);
+    const result = await loginWithCredentials(email, password);
     setLoading(false);
     if (!result.ok) {
       setError(result.error ?? 'Eroare.');
