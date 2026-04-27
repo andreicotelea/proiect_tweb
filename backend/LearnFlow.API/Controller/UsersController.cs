@@ -53,5 +53,21 @@ namespace LearnFlow.API.Controller
             if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
         }
+
+        [HttpPut("{id}/profile")]
+        public IActionResult UpdateProfile(int id, [FromBody] UpdateUserProfileDto dto)
+        {
+            var result = _users.UpdateProfile(id, dto);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}/password")]
+        public IActionResult ChangePassword(int id, [FromBody] ChangePasswordDto dto)
+        {
+            var result = _users.ChangePassword(id, dto);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
     }
 }
