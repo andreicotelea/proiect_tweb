@@ -1,0 +1,12 @@
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\bin\Debug\net8.0\LearnFlow.Domain.deps.json
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\bin\Debug\net8.0\LearnFlow.Domain.dll
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\bin\Debug\net8.0\LearnFlow.Domain.pdb
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.AssemblyInfoInputs.cache
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.AssemblyInfo.cs
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.csproj.CoreCompileInputs.cache
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.sourcelink.json
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.dll
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\refint\LearnFlow.Domain.dll
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\LearnFlow.Domain.pdb
+C:\Users\andre\OneDrive\Documente\GitHub\proiect_tweb\backend\LearnFlow.Domain\obj\Debug\net8.0\ref\LearnFlow.Domain.dll
