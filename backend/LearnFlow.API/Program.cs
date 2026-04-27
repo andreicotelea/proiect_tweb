@@ -76,6 +76,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+LearnFlow.API.Services.SystemStatusBackgroundService.Start();
+
 app.UseMiddleware<LearnFlow.API.Extensions.GlobalExceptionMiddleware>();
 app.UseRateLimiter();
 
