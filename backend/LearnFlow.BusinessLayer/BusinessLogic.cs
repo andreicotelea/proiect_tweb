@@ -2,6 +2,7 @@ using AutoMapper;
 using LearnFlow.BusinessLayer.Interfaces;
 using LearnFlow.BusinessLayer.Mapping;
 using LearnFlow.BusinessLayer.Structure;
+using Microsoft.Extensions.Logging;
 
 namespace LearnFlow.BusinessLayer
 {
@@ -14,7 +15,7 @@ namespace LearnFlow.BusinessLayer
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<MappingProfile>();
-            });
+            }, new LoggerFactory());
 
             _mapper = config.CreateMapper();
         }
