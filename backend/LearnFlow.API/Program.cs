@@ -1,3 +1,4 @@
+using LearnFlow.API.Extensions;
 using LearnFlow.Domain.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -61,6 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           };
       });
 
+builder.Services.AddRateLimitRules();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -75,6 +77,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseMiddleware<LearnFlow.API.Extensions.GlobalExceptionMiddleware>();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
