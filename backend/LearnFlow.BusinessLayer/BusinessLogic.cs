@@ -25,5 +25,6 @@ namespace LearnFlow.BusinessLayer
         public ICategoryService CategoryAction() => new CategoryActionExecution();
         public IProgressService ProgressAction() => new ProgressActionExecution();
         public ILeaderboardService LeaderboardAction() => new LeaderboardActionExecution();
+        public IAdminService AdminAction() => new AdminActionExecution();
     }
 }
