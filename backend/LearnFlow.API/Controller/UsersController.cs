@@ -19,9 +19,18 @@ namespace LearnFlow.API.Controller
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] string? search)
         {
             var data = _users.GetAll();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                data = data.Where(u =>
+                    u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(search, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
             return Ok(data);
         }
 
