@@ -1,6 +1,7 @@
 using LearnFlow.Domain.Models.Progress;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LearnFlow.API.Controller
 {
@@ -25,6 +26,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost]
+        [EnableRateLimiting("submit")]
         public IActionResult Update([FromBody] UpdateProgressDto dto)
         {
             var result = _progress.UpdateProgress(dto);
