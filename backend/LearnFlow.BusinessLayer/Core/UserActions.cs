@@ -11,6 +11,8 @@ namespace LearnFlow.BusinessLayer.Core
         protected List<UserDto> GetAllActionExecution()
         {
             using var context = new AppDbContext();
+            var allProgress = context.UserProgress.ToList();
+
             return context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
@@ -19,6 +21,8 @@ namespace LearnFlow.BusinessLayer.Core
                 Role = u.Role,
                 Avatar = u.Avatar,
                 CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd"),
+                TotalPoints = allProgress.Where(p => p.UserId == u.Id).Sum(p => p.PercentComplete) * 10,
+                Streak = allProgress.Count(p => p.UserId == u.Id && p.PercentComplete >= 100),
             }).ToList();
         }
 
@@ -27,6 +31,9 @@ namespace LearnFlow.BusinessLayer.Core
             using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
+
+            var userProgress = context.UserProgress.Where(p => p.UserId == id).ToList();
+
             return new UserDto
             {
                 Id = user.Id,
@@ -35,6 +42,8 @@ namespace LearnFlow.BusinessLayer.Core
                 Role = user.Role,
                 Avatar = user.Avatar,
                 CreatedAt = user.CreatedAt.ToString("yyyy-MM-dd"),
+                TotalPoints = userProgress.Sum(p => p.PercentComplete) * 10,
+                Streak = userProgress.Count(p => p.PercentComplete >= 100),
             };
         }
 
