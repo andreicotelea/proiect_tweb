@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { registerMock, isLoggedIn } = useAuth();
+  const { registerWithApi, isLoggedIn } = useAuth();
   const { colors } = useTheme();
 
   if (isLoggedIn) {
@@ -20,13 +20,17 @@ export default function RegisterPage() {
     return null;
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError('');
     if (!name.trim()) { setError('Introdu numele tău.'); return; }
     if (!email.trim() || !password.trim()) { setError('Completează toate câmpurile.'); return; }
     setLoading(true);
-    registerMock(name, email);
+    const result = await registerWithApi(name, email, password);
     setLoading(false);
+    if (!result.ok) {
+      setError(result.error ?? 'Eroare.');
+      return;
+    }
     navigate(ROUTES.DASHBOARD);
   };
 
