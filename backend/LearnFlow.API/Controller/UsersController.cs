@@ -50,7 +50,7 @@ namespace LearnFlow.API.Controller
         public IActionResult Delete(int id)
         {
             var result = _users.Delete(id);
-            if (!result.IsSuccess) return BadRequest(result);
+            if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
         }
     }
