@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Grid, List } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate } from 'react-router-dom';
 import { LessonCard } from '@/components';
-import { mockLessons, categories, difficulties } from '@/services/mockData';
+import { lessonService } from '@/api';
+import { categoryService } from '@/api';
+import { USE_MOCK } from '@/config';
+import { mockLessons, categories as mockCategories, difficulties } from '@/services/mockData';
+import type { Lesson } from '@/types';
 
 export default function LessonsPage() {
   const { colors } = useTheme();
@@ -12,13 +16,43 @@ export default function LessonsPage() {
   const [category, setCategory] = useState('All');
   const [difficulty, setDifficulty] = useState('All');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [categories, setCategories] = useState<string[]>(mockCategories);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = mockLessons.filter(l => {
+  useEffect(() => {
+    if (USE_MOCK) {
+      setLessons(mockLessons);
+      setLoading(false);
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const [lessonsRes, catRes] = await Promise.all([
+          lessonService.getAll(),
+          categoryService.getAll(),
+        ]);
+        setLessons(lessonsRes.data as any);
+        const catNames = (catRes.data as any).map((c: any) => c.name);
+        setCategories(['All', ...catNames]);
+      } catch (err) {
+        console.error('Failed to fetch lessons:', err);
+        setLessons(mockLessons);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filtered = lessons.filter(l => {
     if (search && !l.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (category !== 'All' && l.category !== category) return false;
     if (difficulty !== 'All' && l.difficulty !== difficulty) return false;
     return true;
   });
+
+  if (loading) return <div style={{ padding: 28, color: colors.textMuted }}>Se incarca lectiile...</div>;
 
   return (
     <div style={{ padding: 28 }}>
