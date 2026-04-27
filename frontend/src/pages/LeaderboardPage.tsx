@@ -1,12 +1,42 @@
+import { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { leaderboardService } from '@/api';
+import { USE_MOCK } from '@/config';
 import { mockLeaderboard } from '@/services/mockData';
+import type { LeaderboardEntry } from '@/types';
 
 export default function LeaderboardPage() {
   const { colors } = useTheme();
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (USE_MOCK) {
+      setLeaderboard(mockLeaderboard);
+      setLoading(false);
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const res = await leaderboardService.getAll();
+        setLeaderboard(res.data as any);
+      } catch (err) {
+        console.error('Failed to fetch leaderboard:', err);
+        setLeaderboard(mockLeaderboard);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div style={{ padding: 28, color: colors.textMuted }}>Se incarca clasamentul...</div>;
+  if (leaderboard.length < 3) return <div style={{ padding: 28, color: colors.textMuted }}>Nu sunt suficienti studenti pentru clasament.</div>;
+
   const podiumColors = [colors.steel, colors.blush, '#A0866A'];
   const podiumH = [170, 210, 150];
-  const podiumOrder = [mockLeaderboard[1], mockLeaderboard[0], mockLeaderboard[2]];
+  const podiumOrder = [leaderboard[1], leaderboard[0], leaderboard[2]];
 
   return (
     <div style={{ padding: 28 }}>
@@ -58,11 +88,11 @@ export default function LeaderboardPage() {
           <span>Rank</span><span>Student</span><span>Puncte</span><span>Lectii</span><span>Serie</span>
         </div>
 
-        {mockLeaderboard.map((u, i) => (
+        {leaderboard.map((u, i) => (
           <div key={i} style={{
             display: 'grid', gridTemplateColumns: '55px 1fr 110px 90px 95px',
             padding: '14px 22px', alignItems: 'center',
-            borderBottom: i < mockLeaderboard.length - 1 ? `1px solid ${colors.border}` : 'none',
+            borderBottom: i < leaderboard.length - 1 ? `1px solid ${colors.border}` : 'none',
           }}>
             <span style={{
               width: 26, height: 26, borderRadius: 7, display: 'inline-flex',
