@@ -105,7 +105,7 @@ namespace LearnFlow.DataAccessLayer.Context
                     Id = 1,
                     Name = "Admin",
                     Email = "admin@learnflow.md",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"),
+                    PasswordHash = "$2a$11$KZbMz5Y6KOlPjBDmqZ2q3OGF1HjqXMJZV7E6L5KBfHKLdWvKxyKWe",
                     Role = "admin",
                     Avatar = "AD",
                     CreatedAt = DateTime.UtcNow,
