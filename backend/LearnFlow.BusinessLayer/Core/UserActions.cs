@@ -62,5 +62,37 @@ namespace LearnFlow.BusinessLayer.Core
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Utilizator sters." };
         }
+
+        protected ActionResponse UpdateProfileActionExecution(int id, UpdateUserProfileDto dto)
+        {
+            using var context = new AppDbContext();
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
+
+            if (context.Users.Any(u => u.Email == dto.Email && u.Id != id))
+                return new ActionResponse { IsSuccess = false, Message = "Acest email este deja utilizat." };
+
+            user.Name = dto.Name;
+            user.Email = dto.Email;
+            user.Avatar = dto.Avatar;
+            context.SaveChanges();
+            return new ActionResponse { IsSuccess = true, Message = "Profil actualizat cu succes." };
+        }
+
+        protected ActionResponse ChangePasswordActionExecution(int id, ChangePasswordDto dto)
+        {
+            using var context = new AppDbContext();
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+                return new ActionResponse { IsSuccess = false, Message = "Parola curenta este incorecta." };
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            context.SaveChanges();
+            return new ActionResponse { IsSuccess = true, Message = "Parola a fost schimbata cu succes." };
+        }
     }
 }
