@@ -2,9 +2,11 @@ using AutoMapper;
 using LearnFlow.Domain.Entities.User;
 using LearnFlow.Domain.Entities.Lesson;
 using LearnFlow.Domain.Entities.Category;
+using LearnFlow.Domain.Entities.Progress;
 using LearnFlow.Domain.Models.User;
 using LearnFlow.Domain.Models.Lesson;
 using LearnFlow.Domain.Models.Category;
+using LearnFlow.Domain.Models.Progress;
 
 namespace LearnFlow.BusinessLayer.Mapping
 {
@@ -33,6 +35,11 @@ namespace LearnFlow.BusinessLayer.Mapping
                 .ForMember(dest => dest.LessonCount, opt => opt.MapFrom(src => src.Lessons.Count));
 
             CreateMap<CreateCategoryDto, CategoryData>();
+
+            // Progress mappings
+            CreateMap<UserProgressData, ProgressDto>()
+                .ForMember(dest => dest.CompletedAt, opt => opt.MapFrom(src => src.CompletedAt.HasValue ? src.CompletedAt.Value.ToString("yyyy-MM-dd") : null))
+                .ForMember(dest => dest.LastAccessedAt, opt => opt.MapFrom(src => src.LastAccessedAt.ToString("yyyy-MM-dd")));
         }
     }
 }
