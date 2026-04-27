@@ -15,9 +15,24 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string? sortBy)
         {
             var data = _leaderboard.GetLeaderboard();
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                data = sortBy.ToLower() switch
+                {
+                    "points" => data.OrderByDescending(x => x.Points).ToList(),
+                    "lessons" => data.OrderByDescending(x => x.Lessons).ToList(),
+                    "name" => data.OrderBy(x => x.Name).ToList(),
+                    _ => data
+                };
+
+                for (int i = 0; i < data.Count; i++)
+                    data[i].Rank = i + 1;
+            }
+
             return Ok(data);
         }
     }
