@@ -111,6 +111,22 @@ namespace LearnFlow.DataAccessLayer.Context
                     CreatedAt = DateTime.UtcNow,
                 }
             );
+
+            // Indexes
+            modelBuilder.Entity<UserData>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<CategoryData>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<UserProgressData>()
+                .HasIndex(p => new { p.UserId, p.LessonId })
+                .IsUnique();
+
+            modelBuilder.Entity<NotificationData>()
+                .HasIndex(n => n.CreatedAt);
         }
     }
 }
