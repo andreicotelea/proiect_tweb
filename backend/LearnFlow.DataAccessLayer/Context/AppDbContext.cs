@@ -87,6 +87,16 @@ namespace LearnFlow.DataAccessLayer.Context
                 .WithMany()
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Seed Categories
+            modelBuilder.Entity<CategoryData>().HasData(
+                new CategoryData { Id = 1, Name = "Frontend", Description = "Dezvoltare interfete web", Icon = "FE" },
+                new CategoryData { Id = 2, Name = "Backend", Description = "Dezvoltare server-side", Icon = "BE" },
+                new CategoryData { Id = 3, Name = "Database", Description = "Baze de date si SQL", Icon = "DB" },
+                new CategoryData { Id = 4, Name = "DevOps", Description = "Infrastructura si deployment", Icon = "DO" },
+                new CategoryData { Id = 5, Name = "Mobile", Description = "Dezvoltare aplicatii mobile", Icon = "MB" },
+                new CategoryData { Id = 6, Name = "AI/ML", Description = "Inteligenta artificiala si machine learning", Icon = "AI" }
+            );
         }
     }
 }
