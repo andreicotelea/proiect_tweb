@@ -81,6 +81,34 @@ namespace LearnFlow.BusinessLayer.Core
             return new ActionResponse { IsSuccess = true, Message = "Lectie stearsa." };
         }
 
+        protected PaginatedResponse<LessonDto> GetAllPaginatedActionExecution(string? category, string? difficulty, string? search, int page, int pageSize)
+        {
+            using var context = new AppDbContext();
+            var query = context.Lessons.Include(l => l.Category).AsQueryable();
+
+            if (!string.IsNullOrEmpty(category))
+                query = query.Where(l => l.Category.Name == category);
+            if (!string.IsNullOrEmpty(difficulty))
+                query = query.Where(l => l.Difficulty == difficulty);
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(l => l.Title.Contains(search));
+
+            var total = query.Count();
+            var items = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(l => MapToDto(l))
+                .ToList();
+
+            return new PaginatedResponse<LessonDto>
+            {
+                Data = items,
+                Total = total,
+                Page = page,
+                PageSize = pageSize,
+            };
+        }
+
         private static LessonDto MapToDto(LessonData l) => new()
         {
             Id = l.Id,
