@@ -1,12 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Users, Eye, BookOpen, Star, BarChart3, Grid, Plus, Bell, FileText, Edit, Trash2, Settings } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
+import { lessonService, categoryService, adminService } from '@/api';
+import { USE_MOCK } from '@/config';
 import { mockLessons, mockLeaderboard, mockAdminStats } from '@/services/mockData';
+import type { Lesson, AdminStats, Category } from '@/types';
 
 export default function AdminPage() {
   const [tab, setTab] = useState('overview');
   const { colors } = useTheme();
+  const [stats, setStats] = useState<AdminStats>(mockAdminStats);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (USE_MOCK) {
+      setLessons(mockLessons);
+      setLoading(false);
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const [statsRes, lessonsRes, catRes] = await Promise.all([
+          adminService.getStats(),
+          lessonService.getAll(),
+          categoryService.getAll(),
+        ]);
+        setStats(statsRes.data as any);
+        setLessons(lessonsRes.data as any);
+        setCategories(catRes.data as any);
+      } catch (err) {
+        console.error('Failed to fetch admin data:', err);
+        setLessons(mockLessons);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const adminTabs = [
     { id: 'overview', label: 'Prezentare', icon: BarChart3 },
@@ -14,6 +47,8 @@ export default function AdminPage() {
     { id: 'users-mgmt', label: 'Utilizatori', icon: Users },
     { id: 'categories', label: 'Categorii', icon: Grid },
   ];
+
+  if (loading) return <div style={{ padding: 28, color: colors.textMuted }}>Se incarca...</div>;
 
   return (
     <div style={{ padding: 28 }}>
@@ -40,10 +75,10 @@ export default function AdminPage() {
       {tab === 'overview' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-            <StatCard icon={Users} label="Total Utilizatori" value={mockAdminStats.totalUsers.toLocaleString()} trend={12} color={colors.blue} delay={2} />
-            <StatCard icon={Eye} label="Utilizatori Activi" value={mockAdminStats.activeUsers.toLocaleString()} trend={5} color={colors.steel} delay={3} />
-            <StatCard icon={BookOpen} label="Total Lectii" value={mockAdminStats.totalLessons} color={colors.blush} delay={4} />
-            <StatCard icon={Star} label="Rating Mediu" value={mockAdminStats.avgRating} color={colors.success} delay={5} />
+            <StatCard icon={Users} label="Total Utilizatori" value={stats.totalUsers.toLocaleString()} trend={12} color={colors.blue} delay={2} />
+            <StatCard icon={Eye} label="Utilizatori Activi" value={stats.activeUsers.toLocaleString()} trend={5} color={colors.steel} delay={3} />
+            <StatCard icon={BookOpen} label="Total Lectii" value={String(stats.totalLessons)} color={colors.blush} delay={4} />
+            <StatCard icon={Star} label="Rating Mediu" value={String(stats.avgRating)} color={colors.success} delay={5} />
           </div>
 
           <div className="animate-in delay-6" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -53,17 +88,17 @@ export default function AdminPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
                 <div style={{
                   width: 95, height: 95, borderRadius: '50%',
-                  background: `conic-gradient(${colors.blue} ${mockAdminStats.completionRate}%, ${colors.bgElevated} 0)`,
+                  background: `conic-gradient(${colors.blue} ${stats.completionRate}%, ${colors.bgElevated} 0)`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <div style={{
                     width: 72, height: 72, borderRadius: '50%', background: colors.bgCard,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 800, fontSize: 19,
-                  }}>{mockAdminStats.completionRate}%</div>
+                  }}>{stats.completionRate}%</div>
                 </div>
                 <p style={{ color: colors.textMuted, fontSize: 12.5, lineHeight: 1.8 }}>
-                  Rata de completare<br />a lectiilor este de <strong style={{ color: colors.textPrimary }}>{mockAdminStats.completionRate}%</strong>
+                  Rata de completare<br />a lectiilor este de <strong style={{ color: colors.textPrimary }}>{stats.completionRate}%</strong>
                 </p>
               </div>
             </div>
@@ -96,7 +131,7 @@ export default function AdminPage() {
       {tab === 'lessons-mgmt' && (
         <div className="animate-in delay-2" style={{ background: colors.bgCard, borderRadius: 14, border: `1px solid ${colors.border}`, overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: `1px solid ${colors.border}` }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700 }}>Toate Lectiile</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 700 }}>Toate Lectiile ({lessons.length})</h3>
             <button style={{ padding: '9px 18px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
               <Plus size={15} /> Adauga
             </button>
@@ -104,8 +139,8 @@ export default function AdminPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 75px', padding: '11px 22px', fontSize: 11.5, fontWeight: 600, color: colors.textDim, textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: `1px solid ${colors.border}` }}>
             <span>Titlu</span><span>Categorie</span><span>Dificultate</span><span>Rating</span><span>Actiuni</span>
           </div>
-          {mockLessons.map((l, i) => (
-            <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 75px', padding: '14px 22px', alignItems: 'center', borderBottom: i < mockLessons.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
+          {lessons.map((l, i) => (
+            <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 75px', padding: '14px 22px', alignItems: 'center', borderBottom: i < lessons.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
               <span style={{ fontWeight: 500, fontSize: 13.5 }}>{l.title}</span>
               <span style={{ fontSize: 12.5, color: colors.textMuted }}>{l.category}</span>
               <span style={{ fontSize: 12.5, color: colors.textMuted }}>{l.difficulty}</span>
@@ -123,7 +158,7 @@ export default function AdminPage() {
       {tab === 'users-mgmt' && (
         <div className="animate-in delay-2" style={{ background: colors.bgCard, borderRadius: 14, border: `1px solid ${colors.border}`, overflow: 'hidden' }}>
           <div style={{ padding: '18px 22px', borderBottom: `1px solid ${colors.border}` }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700 }}>Utilizatori ({mockAdminStats.totalUsers})</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 700 }}>Utilizatori ({stats.totalUsers})</h3>
           </div>
           {mockLeaderboard.map((u, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: i < mockLeaderboard.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
@@ -148,11 +183,13 @@ export default function AdminPage() {
       {/* Categories */}
       {tab === 'categories' && (
         <div className="animate-in delay-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {['Frontend', 'Backend', 'Database', 'DevOps', 'Mobile', 'AI/ML'].map((c, i) => (
+          {(USE_MOCK ? ['Frontend', 'Backend', 'Database', 'DevOps', 'Mobile', 'AI/ML'] : categories.map(c => c.name)).map((name, i) => (
             <div key={i} style={{ background: colors.bgCard, borderRadius: 12, padding: 22, border: `1px solid ${colors.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 3 }}>{c}</div>
-                <div style={{ fontSize: 11.5, color: colors.textMuted }}>{Math.floor(Math.random() * 15 + 3)} lectii</div>
+                <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 3 }}>{name}</div>
+                <div style={{ fontSize: 11.5, color: colors.textMuted }}>
+                  {USE_MOCK ? Math.floor(Math.random() * 15 + 3) : (categories.find(c => c.name === name)?.lessonCount ?? 0)} lectii
+                </div>
               </div>
               <button style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Edit size={13} /></button>
             </div>
