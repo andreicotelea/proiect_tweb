@@ -16,7 +16,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected LoginResponseDto? LoginActionExecution(UserLoginDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Email == dto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return null;
@@ -26,7 +26,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse RegisterActionExecution(UserRegisterDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             if (context.Users.Any(u => u.Email == dto.Email))
                 return new ActionResponse { IsSuccess = false, Message = "Un cont cu acest email exista deja." };
             var user = new UserData
@@ -44,7 +44,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected UserDto? GetByIdActionExecution(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             return user == null ? null : MapToDto(user);
         }

@@ -9,11 +9,10 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected List<LeaderboardEntryDto> GetLeaderboardActionExecution()
         {
-            using var userContext = new UserContext();
-            using var progressContext = new ProgressContext();
+            using var context = new AppDbContext();
 
-            var users = userContext.Users.ToList();
-            var allProgress = progressContext.UserProgress.ToList();
+            var users = context.Users.ToList();
+            var allProgress = context.UserProgress.ToList();
 
             return users
                 .Where(u => u.Role == "student")

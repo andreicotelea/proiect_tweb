@@ -10,7 +10,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected List<UserDto> GetAllActionExecution()
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             return context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
@@ -24,7 +24,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected UserDto? GetByIdActionExecution(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
             return new UserDto
@@ -40,7 +40,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse UpdateActionExecution(int id, UserDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
@@ -54,7 +54,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse DeleteActionExecution(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };

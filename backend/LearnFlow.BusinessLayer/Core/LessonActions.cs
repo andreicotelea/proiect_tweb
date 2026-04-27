@@ -12,7 +12,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected List<LessonDto> GetAllActionExecution(string? category, string? difficulty, string? search)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var query = context.Lessons.Include(l => l.Category).AsQueryable();
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(l => l.Category.Name == category);
@@ -25,14 +25,14 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected LessonDto? GetByIdActionExecution(int id)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.Include(l => l.Category).FirstOrDefault(l => l.Id == id);
             return lesson == null ? null : MapToDto(lesson);
         }
 
         protected ActionResponse CreateActionExecution(CreateLessonDto dto)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = new LessonData
             {
                 Title = dto.Title,
@@ -53,7 +53,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse UpdateActionExecution(int id, UpdateLessonDto dto)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
@@ -72,7 +72,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse DeleteActionExecution(int id)
         {
-            using var context = new LessonContext();
+            using var context = new AppDbContext();
             var lesson = context.Lessons.FirstOrDefault(l => l.Id == id);
             if (lesson == null)
                 return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
