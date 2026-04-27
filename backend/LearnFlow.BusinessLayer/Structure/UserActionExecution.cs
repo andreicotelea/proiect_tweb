@@ -10,5 +10,7 @@ namespace LearnFlow.BusinessLayer.Structure
         public UserDto? GetById(int id) => GetByIdActionExecution(id);
         public ActionResponse Update(int id, UserDto dto) => UpdateActionExecution(id, dto);
         public ActionResponse Delete(int id) => DeleteActionExecution(id);
+        public ActionResponse UpdateProfile(int id, UpdateUserProfileDto dto) => UpdateProfileActionExecution(id, dto);
+        public ActionResponse ChangePassword(int id, ChangePasswordDto dto) => ChangePasswordActionExecution(id, dto);
     }
 }

@@ -9,4 +9,6 @@ public interface IUserService
     UserDto? GetById(int id);
     ActionResponse Update(int id, UserDto dto);
     ActionResponse Delete(int id);
+    ActionResponse UpdateProfile(int id, UpdateUserProfileDto dto);
+    ActionResponse ChangePassword(int id, ChangePasswordDto dto);
 }
