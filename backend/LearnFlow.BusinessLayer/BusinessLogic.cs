@@ -26,5 +26,6 @@ namespace LearnFlow.BusinessLayer
         public IProgressService ProgressAction() => new ProgressActionExecution();
         public ILeaderboardService LeaderboardAction() => new LeaderboardActionExecution();
         public IAdminService AdminAction() => new AdminActionExecution();
+        public ISubmissionService SubmissionAction() => new SubmissionActionExecution();
     }
 }
