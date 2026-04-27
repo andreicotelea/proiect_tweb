@@ -30,5 +30,6 @@ namespace LearnFlow.BusinessLayer
         public ISubmissionService SubmissionAction() => new SubmissionActionExecution();
         public IAchievementService AchievementAction() => new AchievementActionExecution();
         public INotificationService NotificationAction() => new NotificationActionExecution();
+        public ILessonSectionService LessonSectionAction() => new LessonSectionActionExecution();
     }
 }
