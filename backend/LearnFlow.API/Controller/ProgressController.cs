@@ -33,5 +33,13 @@ namespace LearnFlow.API.Controller
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
+
+        [HttpPost("enroll")]
+        public IActionResult Enroll([FromBody] EnrollDto dto)
+        {
+            var result = _progress.Enroll(dto.UserId, dto.LessonId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return StatusCode(201, result);
+        }
     }
 }

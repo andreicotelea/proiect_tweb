@@ -50,5 +50,28 @@ namespace LearnFlow.BusinessLayer.Core
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Progres actualizat." };
         }
+
+        protected ActionResponse EnrollActionExecution(int userId, int lessonId)
+        {
+            using var context = new AppDbContext();
+            var existing = context.UserProgress.FirstOrDefault(p => p.UserId == userId && p.LessonId == lessonId);
+            if (existing != null)
+                return new ActionResponse { IsSuccess = false, Message = "Esti deja inrolat in aceasta lectie." };
+
+            var lesson = context.Lessons.FirstOrDefault(l => l.Id == lessonId);
+            if (lesson == null)
+                return new ActionResponse { IsSuccess = false, Message = "Lectia nu a fost gasita." };
+
+            var progress = new UserProgressData
+            {
+                UserId = userId,
+                LessonId = lessonId,
+                PercentComplete = 0,
+                LastAccessedAt = DateTime.UtcNow,
+            };
+            context.UserProgress.Add(progress);
+            context.SaveChanges();
+            return new ActionResponse { IsSuccess = true, Message = "Te-ai inrolat cu succes." };
+        }
     }
 }

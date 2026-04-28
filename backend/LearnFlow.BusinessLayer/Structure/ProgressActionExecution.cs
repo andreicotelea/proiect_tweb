@@ -8,5 +8,6 @@ namespace LearnFlow.BusinessLayer.Structure
     {
         public List<ProgressDto> GetByUser(int userId) => GetByUserActionExecution(userId);
         public ActionResponse UpdateProgress(UpdateProgressDto dto) => UpdateProgressActionExecution(dto);
+        public ActionResponse Enroll(int userId, int lessonId) => EnrollActionExecution(userId, lessonId);
     }
 }
