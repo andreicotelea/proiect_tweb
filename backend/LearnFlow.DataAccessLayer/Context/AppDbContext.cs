@@ -6,6 +6,7 @@ using LearnFlow.Domain.Entities.Progress;
 using LearnFlow.Domain.Entities.Submission;
 using LearnFlow.Domain.Entities.Achievement;
 using LearnFlow.Domain.Entities.Notification;
+using LearnFlow.Domain.Entities.Certificate;
 
 namespace LearnFlow.DataAccessLayer.Context
 {
@@ -20,6 +21,7 @@ namespace LearnFlow.DataAccessLayer.Context
         public DbSet<AchievementData> Achievements { get; set; }
         public DbSet<UserAchievementData> UserAchievements { get; set; }
         public DbSet<NotificationData> Notifications { get; set; }
+        public DbSet<CertificateData> Certificates { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -127,6 +129,13 @@ namespace LearnFlow.DataAccessLayer.Context
 
             modelBuilder.Entity<NotificationData>()
                 .HasIndex(n => n.CreatedAt);
+
+            // Category -> Certificates
+            modelBuilder.Entity<CertificateData>()
+                .HasOne(c => c.Category)
+                .WithMany()
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
