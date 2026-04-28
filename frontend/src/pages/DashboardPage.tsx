@@ -5,20 +5,19 @@ import { useNavigate } from 'react-router-dom';
 import { StatCard, LessonCard } from '@/components';
 import { lessonService, leaderboardService } from '@/api';
 import { USE_MOCK } from '@/config';
-import { mockLessons, mockLeaderboard } from '@/services/mockData';
+import { useAuth } from '@/hooks/useAuth';
 import type { Lesson, LeaderboardEntry } from '@/types';
 
 export default function DashboardPage() {
   const { colors } = useTheme();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (USE_MOCK) {
-      setLessons(mockLessons);
-      setLeaderboard(mockLeaderboard);
       setLoading(false);
       return;
     }
@@ -32,8 +31,6 @@ export default function DashboardPage() {
         setLeaderboard(lbRes.data as any);
       } catch (err) {
         console.error('Failed to fetch dashboard data:', err);
-        setLessons(mockLessons);
-        setLeaderboard(mockLeaderboard);
       } finally {
         setLoading(false);
       }
