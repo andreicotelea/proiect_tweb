@@ -32,8 +32,10 @@ export default function LessonsPage() {
           lessonService.getAll(),
           categoryService.getAll(),
         ]);
-        setLessons(lessonsRes.data as any);
-        const catNames = (catRes.data as any).map((c: any) => c.name);
+        const lessonsData = lessonsRes.data as any;
+        const catsData = catRes.data as any;
+        setLessons(Array.isArray(lessonsData) ? lessonsData : []);
+        const catNames = Array.isArray(catsData) ? catsData.map((c: any) => c.name) : [];
         setCategories(['All', ...catNames]);
       } catch (err) {
         console.error('Failed to fetch lessons:', err);
