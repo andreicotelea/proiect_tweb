@@ -28,6 +28,7 @@ export default function AdminPage() {
   const [lessonDiff, setLessonDiff] = useState('Beginner');
   const [lessonDuration, setLessonDuration] = useState('30 min');
   const [lessonProfesor, setLessonProfesor] = useState('');
+  const [lessonVideo, setLessonVideo] = useState('');
 
   // Category form
   const [showCatForm, setShowCatForm] = useState(false);
@@ -69,17 +70,17 @@ export default function AdminPage() {
   // Lesson CRUD
   const openAddLesson = () => {
     setEditLessonId(null); setLessonTitle(''); setLessonDesc(''); setLessonCatId(categories[0]?.id || 1);
-    setLessonDiff('Beginner'); setLessonDuration('30 min'); setLessonProfesor(''); setShowLessonForm(true);
+    setLessonDiff('Beginner'); setLessonDuration('30 min'); setLessonProfesor(''); setLessonVideo(''); setShowLessonForm(true);
   };
   const openEditLesson = (l: Lesson) => {
     setEditLessonId(l.id); setLessonTitle(l.title); setLessonDesc(l.description || '');
     setLessonCatId((l as any).categoryId || 1); setLessonDiff(l.difficulty); setLessonDuration(l.duration);
-    setLessonProfesor(l.profesor); setShowLessonForm(true);
+    setLessonProfesor(l.profesor); setLessonVideo(l.videoUrl || ''); setShowLessonForm(true);
   };
   const saveLesson = async () => {
     if (USE_MOCK) { flashMsg('Mock mode — nu se salveaza.'); setShowLessonForm(false); return; }
     try {
-      const payload = { title: lessonTitle, description: lessonDesc, categoryId: lessonCatId, difficulty: lessonDiff, duration: lessonDuration, profesorName: lessonProfesor, thumbnail: 'DF', isLocked: false };
+      const payload = { title: lessonTitle, description: lessonDesc, categoryId: lessonCatId, difficulty: lessonDiff, duration: lessonDuration, profesorName: lessonProfesor, thumbnail: 'DF', isLocked: false, videoUrl: lessonVideo || null };
       if (editLessonId) {
         await lessonService.update(editLessonId, payload as any);
         flashMsg('Lectie actualizata.');
@@ -229,6 +230,7 @@ export default function AdminPage() {
                   </select>
                 </div>
                 <div style={{ gridColumn: '1 / -1' }}><label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 4 }}>Descriere</label><input value={lessonDesc} onChange={e => setLessonDesc(e.target.value)} style={inputStyle} /></div>
+                <div style={{ gridColumn: '1 / -1' }}><label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 4 }}>Video URL (YouTube)</label><input value={lessonVideo} onChange={e => setLessonVideo(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." style={inputStyle} /></div>
               </div>
               <button onClick={saveLesson} style={{ marginTop: 14, padding: '10px 20px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Save size={14} /> Salveaza</button>
             </div>
