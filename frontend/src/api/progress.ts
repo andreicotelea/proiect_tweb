@@ -7,4 +7,7 @@ export const progressService = {
 
   update: (data: Partial<UserProgress>) =>
     apiClient.post<ApiResponse<UserProgress>>('/progress', data),
+
+  enroll: (data: { userId: number; lessonId: number }) =>
+    apiClient.post('/progress/enroll', data),
 };

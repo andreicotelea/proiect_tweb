@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { ChevronRight, Play, User, Clock, Star, Users, FileText, MessageCircle, Edit, Check } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate, useParams } from 'react-router-dom';
-import { lessonService } from '@/api';
+import { useAuth } from '@/hooks/useAuth';
+import { lessonService, progressService } from '@/api';
 import { USE_MOCK } from '@/config';
 import { mockLessons } from '@/services/mockData';
 import type { Lesson } from '@/types';
@@ -13,6 +14,10 @@ export default function LessonDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [l, setL] = useState<Lesson | null>(null);
   const [tab, setTab] = useState('content');
+  const { user, isLoggedIn } = useAuth();
+  const [enrolled, setEnrolled] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollMsg, setEnrollMsg] = useState('');
 
   useEffect(() => {
     const numId = Number(id);
@@ -24,6 +29,37 @@ export default function LessonDetailPage() {
       .then(res => setL(res.data as any))
       .catch(() => setL(mockLessons.find(lesson => lesson.id === numId) ?? null));
   }, [id]);
+
+  useEffect(() => {
+    if (!user || !l || USE_MOCK) return;
+    progressService.getByUser(user.id)
+      .then(res => {
+        const data = res.data as any;
+        const arr = Array.isArray(data) ? data : [];
+        const found = arr.find((p: any) => p.lessonId === l.id);
+        if (found) setEnrolled(true);
+      })
+      .catch(() => {});
+  }, [user, l]);
+
+  const handleEnroll = async () => {
+    if (!user || !l) return;
+    setEnrolling(true);
+    try {
+      const res = await progressService.enroll({ userId: user.id, lessonId: l.id });
+      const data = res.data as any;
+      if (data.isSuccess) {
+        setEnrolled(true);
+        setEnrollMsg('Te-ai inrolat cu succes!');
+      } else {
+        setEnrollMsg(data.message);
+      }
+    } catch (err: any) {
+      setEnrollMsg(err.response?.data?.message || 'Eroare la inrolare.');
+    }
+    setEnrolling(false);
+    setTimeout(() => setEnrollMsg(''), 3000);
+  };
 
   if (!l) return null;
 
@@ -93,6 +129,28 @@ export default function LessonDetailPage() {
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Users size={13} /> {l.students} studenti</span>
             </div>
           </div>
+
+          {/* Enroll Button */}
+          {isLoggedIn && !USE_MOCK && (
+            <div className="animate-in delay-3" style={{ marginBottom: 18 }}>
+              {enrolled ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '10px 18px', borderRadius: 9, background: `${colors.success}15`, color: colors.success, fontSize: 13.5, fontWeight: 600 }}>
+                  <Check size={16} /> Esti inrolat in aceasta lectie
+                </div>
+              ) : (
+                <button onClick={handleEnroll} disabled={enrolling} style={{
+                  padding: '12px 24px', borderRadius: 9, border: 'none',
+                  background: `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`,
+                  color: '#fff', fontSize: 14, fontWeight: 600, cursor: enrolling ? 'not-allowed' : 'pointer',
+                  fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', gap: 7,
+                  boxShadow: `0 4px 18px ${colors.blueGlow}`,
+                }}>
+                  <Play size={15} /> {enrolling ? 'Se proceseaza...' : 'Inroleaza-te in curs'}
+                </button>
+              )}
+              {enrollMsg && <p style={{ marginTop: 8, fontSize: 12.5, color: colors.blue }}>{enrollMsg}</p>}
+            </div>
+          )}
 
           {/* Tabs */}
           <div className="animate-in delay-4" style={{ display: 'flex', gap: 3, marginBottom: 22, borderBottom: `1px solid ${colors.border}` }}>
