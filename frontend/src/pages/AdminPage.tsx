@@ -4,7 +4,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
 import { lessonService, categoryService, adminService, userService } from '@/api';
 import { USE_MOCK } from '@/config';
-import { mockLessons, mockLeaderboard, mockAdminStats } from '@/services/mockData';
+import { mockAdminStats } from '@/services/mockData';
 import type { Lesson, AdminStats, Category } from '@/types';
 
 interface UserItem { id: number; name: string; email: string; role: string; avatar: string; createdAt: string; }
@@ -39,7 +39,6 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (USE_MOCK) {
-      setLessons(mockLessons);
       setLoading(false);
       return;
     }
@@ -57,7 +56,6 @@ export default function AdminPage() {
         setUsers(usersRes.data as any);
       } catch (err) {
         console.error('Failed to fetch admin data:', err);
-        setLessons(mockLessons);
       } finally {
         setLoading(false);
       }
