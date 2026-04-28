@@ -56,25 +56,31 @@ export default function LessonDetailPage() {
         <div>
           {/* Video area */}
           <div className="animate-in delay-2" style={{
-            background: `linear-gradient(135deg, ${colors.bgElevated}, ${colors.bgHover})`,
-            borderRadius: 14, height: 360, display: 'flex', alignItems: 'center',
-            justifyContent: 'center', marginBottom: 22, position: 'relative',
+            borderRadius: 14, height: 360, marginBottom: 22,
             border: `1px solid ${colors.border}`, overflow: 'hidden',
+            position: 'relative',
+            background: `linear-gradient(135deg, ${colors.bgElevated}, ${colors.bgHover})`,
           }}>
-            <div style={{
-              width: 56, height: 56, borderRadius: 14,
-              background: `${colors.blue}20`, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontSize: 18, fontWeight: 800, color: colors.blue,
-            }}>{l.thumbnail}</div>
-            <button style={{
-              position: 'absolute', width: 68, height: 68, borderRadius: '50%',
-              background: `${colors.blue}dd`, border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: `0 8px 28px ${colors.blueGlow}`,
-              animation: 'pulseGlow 2s ease infinite',
-            }}>
-              <Play size={30} color="#fff" fill="#fff" />
-            </button>
+            {l.videoUrl ? (
+              <iframe
+                width="100%" height="100%"
+                src={l.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/').split('&')[0]}
+                title={l.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ border: 'none' }}
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: 14,
+                  background: `${colors.blue}20`, display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 18, fontWeight: 800, color: colors.blue,
+                }}>{l.thumbnail}</div>
+                <p style={{ color: colors.textMuted, fontSize: 13 }}>Niciun video disponibil</p>
+              </div>
+            )}
           </div>
 
           {/* Title & Meta */}
