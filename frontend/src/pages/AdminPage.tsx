@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Users, Eye, BookOpen, Star, BarChart3, Grid, Plus, Bell, FileText, Edit, Trash2, Settings, X, Save } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
-import { lessonService, categoryService, adminService, userService } from '@/api';
+import { lessonService, categoryService, adminService, userService, apiClient } from '@/api';
 import { USE_MOCK } from '@/config';
 import { mockAdminStats } from '@/services/mockData';
 import type { Lesson, AdminStats, Category } from '@/types';
@@ -36,6 +36,16 @@ export default function AdminPage() {
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
   const [catIcon, setCatIcon] = useState('CT');
+
+  // Section form
+  const [showSectionForm, setShowSectionForm] = useState(false);
+  const [sectionLessonId, setSectionLessonId] = useState<number | null>(null);
+  const [sectionLessonTitle, setSectionLessonTitle] = useState('');
+  const [sections, setSections] = useState<any[]>([]);
+  const [sectionTitle, setSectionTitle] = useState('');
+  const [sectionDuration, setSectionDuration] = useState('10 min');
+  const [sectionOrder, setSectionOrder] = useState(0);
+  const [editSectionId, setEditSectionId] = useState<number | null>(null);
 
   useEffect(() => {
     if (USE_MOCK) {
@@ -133,6 +143,53 @@ export default function AdminPage() {
       flashMsg('Categorie stearsa.');
     } catch (err: any) {
       flashMsg(err.response?.data?.message || 'Eroare la stergere.');
+    }
+  };
+
+  // Section CRUD
+  const openSections = async (lesson: Lesson) => {
+    setSectionLessonId(lesson.id);
+    setSectionLessonTitle(lesson.title);
+    setTab('sections');
+    try {
+      const res = await apiClient.get(`/lesson-sections/lesson/${lesson.id}`);
+      setSections(Array.isArray(res.data) ? res.data : []);
+    } catch { setSections([]); }
+  };
+  const openAddSection = () => {
+    setEditSectionId(null); setSectionTitle(''); setSectionDuration('10 min');
+    setSectionOrder(sections.length); setShowSectionForm(true);
+  };
+  const openEditSection = (s: any) => {
+    setEditSectionId(s.id); setSectionTitle(s.title); setSectionDuration(s.duration);
+    setSectionOrder(s.order); setShowSectionForm(true);
+  };
+  const saveSection = async () => {
+    if (!sectionLessonId) return;
+    try {
+      const payload = { lessonId: sectionLessonId, title: sectionTitle, duration: sectionDuration, order: sectionOrder };
+      if (editSectionId) {
+        await apiClient.put(`/lesson-sections/${editSectionId}`, payload);
+        flashMsg('Sectiune actualizata.');
+      } else {
+        await apiClient.post('/lesson-sections', payload);
+        flashMsg('Sectiune creata.');
+      }
+      const res = await apiClient.get(`/lesson-sections/lesson/${sectionLessonId}`);
+      setSections(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare.');
+    }
+    setShowSectionForm(false);
+  };
+  const deleteSection = async (id: number) => {
+    if (!sectionLessonId) return;
+    try {
+      await apiClient.delete(`/lesson-sections/${id}`);
+      setSections(prev => prev.filter(s => s.id !== id));
+      flashMsg('Sectiune stearsa.');
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare.');
     }
   };
 
@@ -238,16 +295,17 @@ export default function AdminPage() {
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>Toate Lectiile ({lessons.length})</h3>
               <button onClick={openAddLesson} style={{ padding: '9px 18px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Plus size={15} /> Adauga</button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 75px', padding: '11px 22px', fontSize: 11.5, fontWeight: 600, color: colors.textDim, textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: `1px solid ${colors.border}` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 100px', padding: '11px 22px', fontSize: 11.5, fontWeight: 600, color: colors.textDim, textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: `1px solid ${colors.border}` }}>
               <span>Titlu</span><span>Categorie</span><span>Dificultate</span><span>Rating</span><span>Actiuni</span>
             </div>
             {lessons.map((l, i) => (
-              <div key={l.id} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 75px', padding: '14px 22px', alignItems: 'center', borderBottom: i < lessons.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
+              <div key={l.id} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 110px 90px 100px', padding: '14px 22px', alignItems: 'center', borderBottom: i < lessons.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
                 <span style={{ fontWeight: 500, fontSize: 13.5 }}>{l.title}</span>
                 <span style={{ fontSize: 12.5, color: colors.textMuted }}>{l.category}</span>
                 <span style={{ fontSize: 12.5, color: colors.textMuted }}>{l.difficulty}</span>
                 <span style={{ fontSize: 12.5, display: 'flex', alignItems: 'center', gap: 3 }}><Star size={11} color={colors.blush} fill={colors.blush} /> {l.rating}</span>
                 <div style={{ display: 'flex', gap: 5 }}>
+                  <button onClick={() => openSections(l)} title="Sectiuni" style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.blue, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={13} /></button>
                   <button onClick={() => openEditLesson(l)} style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Edit size={13} /></button>
                   <button onClick={() => deleteLesson(l.id)} style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.danger, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={13} /></button>
                 </div>
@@ -273,6 +331,61 @@ export default function AdminPage() {
               <span style={{ padding: '3px 9px', borderRadius: 5, fontSize: 10.5, background: u.role === 'admin' ? `${colors.blue}15` : 'rgba(109,191,160,0.12)', color: u.role === 'admin' ? colors.blue : colors.success }}>{u.role}</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Sections Management */}
+      {tab === 'sections' && sectionLessonId && (
+        <div className="animate-in delay-2">
+          <button onClick={() => setTab('lessons-mgmt')} style={{
+            marginBottom: 14, padding: '8px 16px', borderRadius: 8, fontSize: 12.5,
+            border: `1px solid ${colors.border}`, background: 'transparent',
+            color: colors.textMuted, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+          }}>← Inapoi la lectii</button>
+
+          <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 18 }}>
+            Sectiuni: {sectionLessonTitle}
+          </h3>
+
+          {showSectionForm && (
+            <div style={{ background: colors.bgCard, borderRadius: 14, padding: 22, border: `1px solid ${colors.border}`, marginBottom: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700 }}>{editSectionId ? 'Editeaza Sectiunea' : 'Adauga Sectiune Noua'}</h3>
+                <button onClick={() => setShowSectionForm(false)} style={{ background: 'none', border: 'none', color: colors.textMuted, cursor: 'pointer' }}><X size={18} /></button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 80px', gap: 12 }}>
+                <div><label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 4 }}>Titlu</label><input value={sectionTitle} onChange={e => setSectionTitle(e.target.value)} style={inputStyle} /></div>
+                <div><label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 4 }}>Durata</label><input value={sectionDuration} onChange={e => setSectionDuration(e.target.value)} style={inputStyle} /></div>
+                <div><label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 4 }}>Ordine</label><input type="number" value={sectionOrder} onChange={e => setSectionOrder(Number(e.target.value))} style={inputStyle} /></div>
+              </div>
+              <button onClick={saveSection} style={{ marginTop: 14, padding: '10px 20px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Save size={14} /> Salveaza</button>
+            </div>
+          )}
+
+          <div style={{ background: colors.bgCard, borderRadius: 14, border: `1px solid ${colors.border}`, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', borderBottom: `1px solid ${colors.border}` }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Toate Sectiunile ({sections.length})</h3>
+              <button onClick={openAddSection} style={{ padding: '9px 18px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Plus size={15} /> Adauga</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr 100px 80px', padding: '11px 22px', fontSize: 11.5, fontWeight: 600, color: colors.textDim, textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: `1px solid ${colors.border}` }}>
+              <span>#</span><span>Titlu</span><span>Durata</span><span>Actiuni</span>
+            </div>
+            {sections.length === 0 ? (
+              <div style={{ padding: 28, textAlign: 'center', color: colors.textDim, fontSize: 13 }}>Nu exista sectiuni. Adauga prima sectiune.</div>
+            ) : (
+              sections.map((s, i) => (
+                <div key={s.id} style={{ display: 'grid', gridTemplateColumns: '50px 1fr 100px 80px', padding: '14px 22px', alignItems: 'center', borderBottom: i < sections.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: colors.textDim }}>{s.order + 1}</span>
+                  <span style={{ fontWeight: 500, fontSize: 13.5 }}>{s.title}</span>
+                  <span style={{ fontSize: 12.5, color: colors.textMuted }}>{s.duration}</span>
+                  <div style={{ display: 'flex', gap: 5 }}>
+                    <button onClick={() => openEditSection(s)} style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Edit size={13} /></button>
+                    <button onClick={() => deleteSection(s.id)} style={{ width: 28, height: 28, borderRadius: 5, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.danger, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={13} /></button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       )}
 
