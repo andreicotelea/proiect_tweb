@@ -27,9 +27,23 @@ namespace LearnFlow.API.Controller
         [HttpPost]
         public IActionResult Update([FromBody] UpdateProgressDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _progress.UpdateProgress(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
+        }
+
+        [HttpPost("enroll")]
+        public IActionResult Enroll([FromBody] EnrollDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _progress.Enroll(dto.UserId, dto.LessonId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return StatusCode(201, result);
         }
     }
 }

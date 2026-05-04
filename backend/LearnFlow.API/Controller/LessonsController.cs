@@ -43,6 +43,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Create([FromBody] CreateLessonDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _lessons.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
@@ -52,6 +55,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Update(int id, [FromBody] UpdateLessonDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _lessons.Update(id, dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);

@@ -29,6 +29,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Create([FromBody] CreateCategoryDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _categories.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
@@ -38,6 +41,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Update(int id, [FromBody] CreateCategoryDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _categories.Update(id, dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
