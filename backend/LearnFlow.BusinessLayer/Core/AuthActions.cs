@@ -38,6 +38,15 @@ namespace LearnFlow.BusinessLayer.Core
             if (dto.Email.Length > 150)
                 return new ActionResponse { IsSuccess = false, Message = "Email-ul nu poate depasi 150 caractere." };
 
+            if (dto.Password.Length < 4)
+                return new ActionResponse { IsSuccess = false, Message = "Parola trebuie sa aiba minim 4 caractere." };
+
+            if (dto.Password.Length > 100)
+                return new ActionResponse { IsSuccess = false, Message = "Parola nu poate depasi 100 caractere." };
+
+            if (dto.Name.Length < 2 || dto.Name.Length > 100)
+                return new ActionResponse { IsSuccess = false, Message = "Numele trebuie sa aiba intre 2 si 100 caractere." };
+
             using var context = new UserContext();
             if (context.Users.Any(u => u.Email == dto.Email))
                 return new ActionResponse { IsSuccess = false, Message = "Un cont cu acest email exista deja." };
