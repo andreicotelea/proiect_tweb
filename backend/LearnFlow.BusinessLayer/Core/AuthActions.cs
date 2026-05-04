@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LearnFlow.BusinessLayer.Core
 {
@@ -16,6 +17,10 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected LoginResponseDto? LoginActionExecution(UserLoginDto dto)
         {
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            if (!emailRegex.IsMatch(dto.Email))
+                return null;
+
             using var context = new UserContext();
             var user = context.Users.FirstOrDefault(u => u.Email == dto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
@@ -26,6 +31,13 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse RegisterActionExecution(UserRegisterDto dto)
         {
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            if (!emailRegex.IsMatch(dto.Email))
+                return new ActionResponse { IsSuccess = false, Message = "Formatul email-ului este invalid." };
+
+            if (dto.Email.Length > 150)
+                return new ActionResponse { IsSuccess = false, Message = "Email-ul nu poate depasi 150 caractere." };
+
             using var context = new UserContext();
             if (context.Users.Any(u => u.Email == dto.Email))
                 return new ActionResponse { IsSuccess = false, Message = "Un cont cu acest email exista deja." };
