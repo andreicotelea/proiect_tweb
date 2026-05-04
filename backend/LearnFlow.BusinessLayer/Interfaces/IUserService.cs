@@ -9,4 +9,5 @@ public interface IUserService
     UserDto? GetById(int id);
     ActionResponse Update(int id, UserDto dto);
     ActionResponse Delete(int id);
+    UserDashboardStatsDto GetDashboardStats(int userId);
 }

@@ -53,5 +53,12 @@ namespace LearnFlow.API.Controller
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
+
+        [HttpGet("{id}/dashboard")]
+        public IActionResult GetDashboardStats(int id)
+        {
+            var stats = _users.GetDashboardStats(id);
+            return Ok(stats);
+        }
     }
 }
