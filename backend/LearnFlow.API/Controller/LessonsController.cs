@@ -34,7 +34,7 @@ namespace LearnFlow.API.Controller
         {
             var lesson = _lessons.GetById(id);
             if (lesson == null)
-                return NotFound();
+                return NotFound(new { isSuccess = false, message = "Lectia nu a fost gasita." });
 
             return Ok(lesson);
         }
