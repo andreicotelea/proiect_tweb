@@ -5,6 +5,9 @@ export const categoryService = {
   getAll: () =>
     apiClient.get<ApiResponse<Category[]>>('/categories'),
 
+getById: (id: number) =>
+    apiClient.get<ApiResponse<Category>>(`/categories/${id}`),
+
   create: (data: Partial<Category>) =>
     apiClient.post<ApiResponse<Category>>('/categories', data),
 

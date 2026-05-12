@@ -5,6 +5,7 @@ export { default as LessonDetailPage } from './LessonDetailPage';
 export { default as LeaderboardPage } from './LeaderboardPage';
 export { default as ProfilePage } from './ProfilePage';
 export { default as AdminPage } from './AdminPage';
+export { default as CategoriesPage } from './CategoriesPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as CertificatesPage } from './CertificatesPage';
 export { default as NotificationsPage } from './NotificationsPage';

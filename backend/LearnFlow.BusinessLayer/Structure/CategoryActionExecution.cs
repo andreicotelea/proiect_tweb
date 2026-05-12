@@ -7,6 +7,7 @@ namespace LearnFlow.BusinessLayer.Structure
     public class CategoryActionExecution : Core.CategoryActions, ICategoryService
     {
         public List<CategoryDto> GetAll() => GetAllActionExecution();
+        public CategoryDto? GetById(int id) => GetByIdActionExecution(id);
         public ActionResponse Create(CreateCategoryDto dto) => CreateActionExecution(dto);
         public ActionResponse Update(int id, CreateCategoryDto dto) => UpdateActionExecution(id, dto);
         public ActionResponse Delete(int id) => DeleteActionExecution(id);

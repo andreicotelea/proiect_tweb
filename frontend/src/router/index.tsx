@@ -15,6 +15,7 @@ import SettingsPage from '../pages/SettingsPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import CertificatesPage from '../pages/CertificatesPage';
 import AdminPage from '../pages/AdminPage';
+import CategoriesPage from '../pages/CategoriesPage';
 import HealthCheckPage from '../pages/HealthCheckPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
             element: <ProtectedRoute requiredRole="Admin" />,
             children: [
               { path: ROUTE_SEGMENTS.ADMIN, element: <AdminPage /> },
+              { path: ROUTE_SEGMENTS.CATEGORIES, element: <CategoriesPage /> },
               { path: ROUTE_SEGMENTS.HEALTH, element: <HealthCheckPage /> },
             ],
           },

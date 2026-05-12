@@ -22,7 +22,20 @@ namespace LearnFlow.BusinessLayer.Core
                 LessonCount = c.Lessons.Count,
             }).ToList();
         }
-
+protected CategoryDto? GetByIdActionExecution(int id)
+        {
+            using var context = new AppDbContext();
+            var c = context.Categories.Include(c => c.Lessons).FirstOrDefault(c => c.Id == id);
+            if (c == null) return null;
+            return new CategoryDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Icon = c.Icon,
+                LessonCount = c.Lessons.Count,
+            };
+        }
         protected ActionResponse CreateActionExecution(CreateCategoryDto dto)
         {
             using var context = new AppDbContext();

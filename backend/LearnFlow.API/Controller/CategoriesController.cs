@@ -24,7 +24,14 @@ namespace LearnFlow.API.Controller
             var data = _categories.GetAll();
             return Ok(data);
         }
-
+[HttpGet("{id}")]
+        [AllowAnonymous]
+        public IActionResult GetById(int id)
+        {
+            var data = _categories.GetById(id);
+            if (data == null) return NotFound(new { IsSuccess = false, Message = "Categoria nu a fost gasita." });
+            return Ok(data);
+        }
         [HttpPost]
         [Authorize(Roles = "admin")]
         public IActionResult Create([FromBody] CreateCategoryDto dto)
