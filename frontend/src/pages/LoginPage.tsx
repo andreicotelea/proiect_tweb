@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -14,10 +14,11 @@ export default function LoginPage() {
   const { loginWithCredentials, isLoggedIn } = useAuth();
   const { colors } = useTheme();
 
-  if (isLoggedIn) {
-    navigate(ROUTES.DASHBOARD, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async () => {
     setError('');
