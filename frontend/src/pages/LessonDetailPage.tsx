@@ -101,7 +101,7 @@ export default function LessonDetailPage() {
             position: 'relative',
             background: `linear-gradient(135deg, ${colors.bgElevated}, ${colors.bgHover})`,
           }}>
-            {l.videoUrl ? (
+            {l.videoUrl && (l.videoUrl.includes('youtube.com') || l.videoUrl.includes('youtu.be')) ? (
               <iframe
                 width="100%" height="100%"
                 src={l.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/').split('&')[0]}
