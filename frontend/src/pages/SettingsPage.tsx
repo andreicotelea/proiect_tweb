@@ -114,7 +114,7 @@ export default function SettingsPage() {
   });
 
   return (
-    <div style={{ padding: 28, maxWidth: 720, margin: '0 auto' }}>
+    <div style={{ padding: 28, maxWidth: 620, margin: '0 auto' }}>
       {/* Tabs */}
       <div className="animate-in delay-1" style={{ display: 'flex', gap: 4, marginBottom: 28 }}>
         {tabs.map(t => {
