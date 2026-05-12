@@ -1,3 +1,4 @@
+using LearnFlow.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnFlow.API.Controller
@@ -9,7 +10,26 @@ namespace LearnFlow.API.Controller
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("API is healthy");
+            var snapshot = SystemStatusService.Latest;
+
+            if (snapshot == null)
+                return Ok(new
+                {
+                    status = "starting",
+                    message = "Health check not yet completed.",
+                    checkedAt = DateTime.UtcNow,
+                });
+
+            return Ok(new
+            {
+                status = snapshot.DbOnline ? "healthy" : "degraded",
+                database = new
+                {
+                    online = snapshot.DbOnline,
+                    latencyMs = snapshot.DbLatencyMs,
+                },
+                checkedAt = snapshot.CheckedAt,
+            });
         }
     }
 }

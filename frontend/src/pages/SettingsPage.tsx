@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { User, Lock, Bell, Trash2, Save, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { userService } from '@/api';
+import { USE_MOCK } from '@/config';
 
 export default function SettingsPage() {
   const { colors } = useTheme();
@@ -19,10 +21,64 @@ export default function SettingsPage() {
   const [notifNewLesson, setNotifNewLesson] = useState(true);
   const [notifAchievement, setNotifAchievement] = useState(true);
   const [notifLeaderboard, setNotifLeaderboard] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setError('');
+    if (USE_MOCK) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      return;
+    }
+    try {
+      const res = await userService.updateProfile(user.id, { name, email, avatar: user.avatar });
+      const data = res.data as any;
+      if (data.isSuccess) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        setError(data.message);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la salvare.');
+    }
+  };
+
+  const handleSavePassword = async () => {
+    if (!user) return;
+    setError('');
+    if (newPass !== confirmPass) {
+      setError('Parolele noi nu coincid.');
+      return;
+    }
+    if (!currentPass || !newPass) {
+      setError('Completează toate câmpurile.');
+      return;
+    }
+    if (USE_MOCK) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      return;
+    }
+    try {
+      const res = await userService.changePassword(user.id, {
+        currentPassword: currentPass,
+        newPassword: newPass,
+      });
+      const data = res.data as any;
+      if (data.isSuccess) {
+        setSaved(true);
+        setCurrentPass('');
+        setNewPass('');
+        setConfirmPass('');
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        setError(data.message);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la schimbarea parolei.');
+    }
   };
 
   const tabs = [
@@ -116,7 +172,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <button onClick={handleSave} style={{
+            <button onClick={handleSaveProfile} style={{
               marginTop: 22, padding: '11px 24px', borderRadius: 9, border: 'none',
               background: saved ? colors.success : `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`,
               color: '#fff', fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
@@ -127,6 +183,9 @@ export default function SettingsPage() {
             }}>
               <Save size={15} /> {saved ? 'Salvat!' : 'Salveaza Modificarile'}
             </button>
+            {error && (
+              <div style={{ marginTop: 12, color: colors.danger, fontSize: 12.5 }}>{error}</div>
+            )}
           </div>
         </div>
       )}
@@ -166,7 +225,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <button onClick={handleSave} style={{
+            <button onClick={handleSavePassword} style={{
               marginTop: 22, padding: '11px 24px', borderRadius: 9, border: 'none',
               background: `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`,
               color: '#fff', fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
@@ -176,6 +235,9 @@ export default function SettingsPage() {
             }}>
               <Lock size={15} /> Actualizeaza Parola
             </button>
+            {error && (
+              <div style={{ marginTop: 12, color: colors.danger, fontSize: 12.5 }}>{error}</div>
+            )}
           </div>
 
           {/* Danger Zone */}
@@ -233,7 +295,7 @@ export default function SettingsPage() {
               ))}
             </div>
 
-            <button onClick={handleSave} style={{
+            <button onClick={handleSaveProfile} style={{
               marginTop: 22, padding: '11px 24px', borderRadius: 9, border: 'none',
               background: saved ? colors.success : `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`,
               color: '#fff', fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
@@ -244,6 +306,9 @@ export default function SettingsPage() {
             }}>
               <Save size={15} /> {saved ? 'Salvat!' : 'Salveaza Preferintele'}
             </button>
+            {error && (
+              <div style={{ marginTop: 12, color: colors.danger, fontSize: 12.5 }}>{error}</div>
+            )}
           </div>
         </div>
       )}

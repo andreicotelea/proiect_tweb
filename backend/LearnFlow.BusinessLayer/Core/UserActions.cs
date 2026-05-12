@@ -1,7 +1,6 @@
 using LearnFlow.Domain.Models.User;
 using LearnFlow.Domain.Models.Responses;
 using LearnFlow.DataAccessLayer.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace LearnFlow.BusinessLayer.Core
 {
@@ -11,7 +10,9 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected List<UserDto> GetAllActionExecution()
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
+            var allProgress = context.UserProgress.ToList();
+
             return context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
@@ -20,14 +21,19 @@ namespace LearnFlow.BusinessLayer.Core
                 Role = u.Role,
                 Avatar = u.Avatar,
                 CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd"),
+                TotalPoints = allProgress.Where(p => p.UserId == u.Id).Sum(p => p.PercentComplete) * 10,
+                Streak = allProgress.Count(p => p.UserId == u.Id && p.PercentComplete >= 100),
             }).ToList();
         }
 
         protected UserDto? GetByIdActionExecution(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
+
+            var userProgress = context.UserProgress.Where(p => p.UserId == id).ToList();
+
             return new UserDto
             {
                 Id = user.Id,
@@ -36,12 +42,14 @@ namespace LearnFlow.BusinessLayer.Core
                 Role = user.Role,
                 Avatar = user.Avatar,
                 CreatedAt = user.CreatedAt.ToString("yyyy-MM-dd"),
+                TotalPoints = userProgress.Sum(p => p.PercentComplete) * 10,
+                Streak = userProgress.Count(p => p.PercentComplete >= 100),
             };
         }
 
         protected ActionResponse UpdateActionExecution(int id, UserDto dto)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
@@ -55,7 +63,7 @@ namespace LearnFlow.BusinessLayer.Core
 
         protected ActionResponse DeleteActionExecution(int id)
         {
-            using var context = new UserContext();
+            using var context = new AppDbContext();
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
                 return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
@@ -64,36 +72,36 @@ namespace LearnFlow.BusinessLayer.Core
             return new ActionResponse { IsSuccess = true, Message = "Utilizator sters." };
         }
 
-        protected UserDashboardStatsDto GetDashboardStatsActionExecution(int userId)
+        protected ActionResponse UpdateProfileActionExecution(int id, UpdateUserProfileDto dto)
         {
-            using var progressContext = new ProgressContext();
-            using var userContext = new UserContext();
-            using var achievementContext = new AchievementContext();
+            using var context = new AppDbContext();
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
 
-            var progress = progressContext.UserProgress.Where(p => p.UserId == userId).ToList();
-            var completed = progress.Count(p => p.PercentComplete >= 100);
-            var inProgress = progress.Count(p => p.PercentComplete > 0 && p.PercentComplete < 100);
-            var totalPoints = progress.Sum(p => p.PercentComplete) * 10;
+            if (context.Users.Any(u => u.Email == dto.Email && u.Id != id))
+                return new ActionResponse { IsSuccess = false, Message = "Acest email este deja utilizat." };
 
-            var allUsers = userContext.Users.Where(u => u.Role == "student").ToList();
-            var allProgress = progressContext.UserProgress.ToList();
-            var rankings = allUsers
-                .Select(u => new { u.Id, Points = allProgress.Where(p => p.UserId == u.Id).Sum(p => p.PercentComplete) * 10 })
-                .OrderByDescending(x => x.Points).ToList();
-            var rank = rankings.FindIndex(x => x.Id == userId) + 1;
-            if (rank == 0) rank = rankings.Count + 1;
+            user.Name = dto.Name;
+            user.Email = dto.Email;
+            user.Avatar = dto.Avatar;
+            context.SaveChanges();
+            return new ActionResponse { IsSuccess = true, Message = "Profil actualizat cu succes." };
+        }
 
-            var achievements = achievementContext.UserAchievements.Count(a => a.UserId == userId);
+        protected ActionResponse ChangePasswordActionExecution(int id, ChangePasswordDto dto)
+        {
+            using var context = new AppDbContext();
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return new ActionResponse { IsSuccess = false, Message = "Utilizatorul nu a fost gasit." };
 
-            return new UserDashboardStatsDto
-            {
-                CompletedLessons = completed,
-                InProgressLessons = inProgress,
-                TotalPoints = totalPoints,
-                Streak = completed,
-                Rank = rank,
-                TotalAchievements = achievements,
-            };
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+                return new ActionResponse { IsSuccess = false, Message = "Parola curenta este incorecta." };
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            context.SaveChanges();
+            return new ActionResponse { IsSuccess = true, Message = "Parola a fost schimbata cu succes." };
         }
     }
 }

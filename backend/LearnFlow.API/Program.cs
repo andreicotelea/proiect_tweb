@@ -1,7 +1,9 @@
+using LearnFlow.API.Extensions;
 using LearnFlow.Domain.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,8 @@ JwtSettings.Issuer = builder.Configuration["Jwt:Issuer"]!;
 JwtSettings.Audience = builder.Configuration["Jwt:Audience"]!;
 JwtSettings.ExpireMinutes = int.Parse(builder.Configuration["Jwt:ExpireMinutes"]!);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -59,6 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           };
       });
 
+builder.Services.AddRateLimitRules();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -71,6 +75,11 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+LearnFlow.API.Services.SystemStatusBackgroundService.Start();
+
+app.UseMiddleware<LearnFlow.API.Extensions.GlobalExceptionMiddleware>();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

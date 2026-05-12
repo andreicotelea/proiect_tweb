@@ -1,0 +1,141 @@
+using Microsoft.EntityFrameworkCore;
+using LearnFlow.Domain.Entities.User;
+using LearnFlow.Domain.Entities.Lesson;
+using LearnFlow.Domain.Entities.Category;
+using LearnFlow.Domain.Entities.Progress;
+using LearnFlow.Domain.Entities.Submission;
+using LearnFlow.Domain.Entities.Achievement;
+using LearnFlow.Domain.Entities.Notification;
+using LearnFlow.Domain.Entities.Certificate;
+
+namespace LearnFlow.DataAccessLayer.Context
+{
+    public class AppDbContext : DbContext
+    {
+        public DbSet<UserData> Users { get; set; }
+        public DbSet<LessonData> Lessons { get; set; }
+        public DbSet<LessonSectionData> LessonSections { get; set; }
+        public DbSet<CategoryData> Categories { get; set; }
+        public DbSet<UserProgressData> UserProgress { get; set; }
+        public DbSet<SubmissionData> Submissions { get; set; }
+        public DbSet<AchievementData> Achievements { get; set; }
+        public DbSet<UserAchievementData> UserAchievements { get; set; }
+        public DbSet<NotificationData> Notifications { get; set; }
+        public DbSet<CertificateData> Certificates { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(DbSession.ConnectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Category -> Lessons
+            modelBuilder.Entity<LessonData>()
+                .HasOne(l => l.Category)
+                .WithMany(c => c.Lessons)
+                .HasForeignKey(l => l.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Lesson -> Sections
+            modelBuilder.Entity<LessonSectionData>()
+                .HasOne(s => s.Lesson)
+                .WithMany(l => l.Sections)
+                .HasForeignKey(s => s.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // User -> Progress
+            modelBuilder.Entity<UserProgressData>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Progress)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Lesson -> Progress
+            modelBuilder.Entity<UserProgressData>()
+                .HasOne(p => p.Lesson)
+                .WithMany(l => l.Progress)
+                .HasForeignKey(p => p.LessonId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // User -> Submissions
+            modelBuilder.Entity<SubmissionData>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Submissions)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // UserAchievement composite key
+            modelBuilder.Entity<UserAchievementData>()
+                .HasKey(ua => new { ua.UserId, ua.AchievementId });
+
+            // User -> UserAchievements
+            modelBuilder.Entity<UserAchievementData>()
+                .HasOne(ua => ua.User)
+                .WithMany(u => u.Achievements)
+                .HasForeignKey(ua => ua.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Achievement -> UserAchievements
+            modelBuilder.Entity<UserAchievementData>()
+                .HasOne(ua => ua.Achievement)
+                .WithMany()
+                .HasForeignKey(ua => ua.AchievementId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // User -> Notifications
+            modelBuilder.Entity<NotificationData>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Seed Categories
+            modelBuilder.Entity<CategoryData>().HasData(
+                new CategoryData { Id = 1, Name = "Frontend", Description = "Dezvoltare interfete web", Icon = "FE" },
+                new CategoryData { Id = 2, Name = "Backend", Description = "Dezvoltare server-side", Icon = "BE" },
+                new CategoryData { Id = 3, Name = "Database", Description = "Baze de date si SQL", Icon = "DB" },
+                new CategoryData { Id = 4, Name = "DevOps", Description = "Infrastructura si deployment", Icon = "DO" },
+                new CategoryData { Id = 5, Name = "Mobile", Description = "Dezvoltare aplicatii mobile", Icon = "MB" },
+                new CategoryData { Id = 6, Name = "AI/ML", Description = "Inteligenta artificiala si machine learning", Icon = "AI" }
+            );
+
+            // Seed Admin User (password: admin)
+            modelBuilder.Entity<UserData>().HasData(
+                new UserData
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Email = "admin@learnflow.md",
+                    PasswordHash = "$2a$11$KZbMz5Y6KOlPjBDmqZ2q3OGF1HjqXMJZV7E6L5KBfHKLdWvKxyKWe",
+                    Role = "admin",
+                    Avatar = "AD",
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
+
+            // Indexes
+            modelBuilder.Entity<UserData>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<CategoryData>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<UserProgressData>()
+                .HasIndex(p => new { p.UserId, p.LessonId })
+                .IsUnique();
+
+            modelBuilder.Entity<NotificationData>()
+                .HasIndex(n => n.CreatedAt);
+
+            // Category -> Certificates
+            modelBuilder.Entity<CertificateData>()
+                .HasOne(c => c.Category)
+                .WithMany()
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+}

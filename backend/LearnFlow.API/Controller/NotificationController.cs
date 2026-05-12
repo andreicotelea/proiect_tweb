@@ -18,33 +18,18 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet("user/{userId}")]
-        public IActionResult GetByUser(int userId, [FromQuery] string? type, [FromQuery] bool? unreadOnly)
+        public IActionResult GetByUser(int userId)
         {
             var data = _notifications.GetByUser(userId);
-
-            if (!string.IsNullOrEmpty(type))
-                data = data.Where(n => n.Type.Equals(type, StringComparison.OrdinalIgnoreCase)).ToList();
-
-            if (unreadOnly == true)
-                data = data.Where(n => !n.IsRead).ToList();
-
             return Ok(data);
         }
 
-        [HttpPut("{id}/read")]
-        public IActionResult MarkRead(int id)
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetAll()
         {
-            var result = _notifications.MarkRead(id);
-            if (!result.IsSuccess) return NotFound(result);
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var result = _notifications.Delete(id);
-            if (!result.IsSuccess) return NotFound(result);
-            return Ok(result);
+            var data = _notifications.GetAll();
+            return Ok(data);
         }
 
         [HttpPost]
@@ -54,6 +39,23 @@ namespace LearnFlow.API.Controller
             var result = _notifications.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return StatusCode(201, result);
+        }
+
+        [HttpPut("{id}/read")]
+        public IActionResult MarkAsRead(int id)
+        {
+            var result = _notifications.MarkAsRead(id);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+        public IActionResult Delete(int id)
+        {
+            var result = _notifications.Delete(id);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
         }
     }
 }

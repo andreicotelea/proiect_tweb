@@ -48,7 +48,7 @@ namespace LearnFlow.API.Controller
 
             var result = _lessons.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
-            return Ok(result);
+            return StatusCode(201, result);
         }
 
         [HttpPut("{id}")]
@@ -68,7 +68,7 @@ namespace LearnFlow.API.Controller
         public IActionResult Delete(int id)
         {
             var result = _lessons.Delete(id);
-            if (!result.IsSuccess) return BadRequest(result);
+            if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
         }
     }

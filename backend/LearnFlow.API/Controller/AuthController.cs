@@ -1,6 +1,7 @@
 using LearnFlow.Domain.Models.User;
 using LearnFlow.Domain.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LearnFlow.API.Controller
 {
@@ -17,6 +18,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("auth")]
         public IActionResult Login([FromBody] UserLoginDto dto)
         {
             if (!ModelState.IsValid)
@@ -35,6 +37,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("auth")]
         public IActionResult Register([FromBody] UserRegisterDto dto)
         {
             if (!ModelState.IsValid)

@@ -11,7 +11,7 @@ interface AuthModalProps {
 
 export default function AuthModal({ show, onClose, onLogin }: AuthModalProps) {
   const { colors } = useTheme();
-  const { loginWithCredentials, registerMock } = useAuth();
+  const { loginWithCredentials, registerWithApi } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,18 +21,19 @@ export default function AuthModal({ show, onClose, onLogin }: AuthModalProps) {
 
   if (!show) return null;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError('');
     setLoading(true);
     if (mode === 'login') {
-      const result = loginWithCredentials(email, password);
+      const result = await loginWithCredentials(email, password);
       setLoading(false);
       if (!result.ok) { setError(result.error ?? 'Eroare.'); return; }
     } else {
       if (!name.trim()) { setLoading(false); setError('Introdu numele tău.'); return; }
       if (!email.trim() || !password.trim()) { setLoading(false); setError('Completează toate câmpurile.'); return; }
-      registerMock(name, email);
+      const result = await registerWithApi(name, email, password);
       setLoading(false);
+      if (!result.ok) { setError(result.error ?? 'Eroare.'); return; }
     }
     onLogin();
   };

@@ -34,7 +34,7 @@ export default function HealthCheckPage() {
         status: 'online',
         responseTime: ms,
         checkedAt: new Date().toLocaleTimeString('ro-RO'),
-        serverTime: res.data?.timestamp,
+        serverTime: res.data?.checkedAt,
       });
     } catch {
       setResult({

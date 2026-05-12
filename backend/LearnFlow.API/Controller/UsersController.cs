@@ -19,9 +19,18 @@ namespace LearnFlow.API.Controller
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] string? search)
         {
             var data = _users.GetAll();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                data = data.Where(u =>
+                    u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(search, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
             return Ok(data);
         }
 
@@ -50,6 +59,22 @@ namespace LearnFlow.API.Controller
         public IActionResult Delete(int id)
         {
             var result = _users.Delete(id);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}/profile")]
+        public IActionResult UpdateProfile(int id, [FromBody] UpdateUserProfileDto dto)
+        {
+            var result = _users.UpdateProfile(id, dto);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}/password")]
+        public IActionResult ChangePassword(int id, [FromBody] ChangePasswordDto dto)
+        {
+            var result = _users.ChangePassword(id, dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
