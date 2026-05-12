@@ -14,6 +14,10 @@ const pageTitles: Record<string, string> = {
   '/leaderboard': 'Clasament',
   '/profile': 'Profilul Meu',
   '/admin': 'Panou Admin',
+  '/settings': 'Setări',
+  '/notifications': 'Notificări',
+  '/certificates': 'Certificate',
+  '/health': 'Health Check',
 };
 
 export default function TopBar({ isLoggedIn, onLogout, onShowAuth }: TopBarProps) {
