@@ -26,8 +26,8 @@ namespace LearnFlow.API.Controller
             if (!string.IsNullOrEmpty(search))
             {
                 data = data.Where(u =>
-                    u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    u.Email.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    (u.Name ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (u.Email ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
                 ).ToList();
             }
 
@@ -79,11 +79,5 @@ namespace LearnFlow.API.Controller
             return Ok(result);
         }
 
-        [HttpGet("{id}/dashboard")]
-        public IActionResult GetDashboardStats(int id)
-        {
-            var stats = _users.GetDashboardStats(id);
-            return Ok(stats);
-        }
     }
 }
