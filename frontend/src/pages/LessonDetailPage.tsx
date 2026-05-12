@@ -135,7 +135,7 @@ export default function LessonDetailPage() {
           </div>
 
           {/* Enroll Button */}
-          {isLoggedIn && !USE_MOCK && (
+          {isLoggedIn && !USE_MOCK && user?.role !== 'admin' && (
             <div className="animate-in delay-3" style={{ marginBottom: 18 }}>
               {enrolled ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '10px 18px', borderRadius: 9, background: `${colors.success}15`, color: colors.success, fontSize: 13.5, fontWeight: 600 }}>
