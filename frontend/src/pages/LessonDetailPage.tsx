@@ -181,10 +181,7 @@ export default function LessonDetailPage() {
           }}>
             {tab === 'content' && (
               <p style={{ color: colors.textMuted, lineHeight: 1.8, fontSize: 13.5 }}>
-                Aceasta lectie acopera conceptele fundamentale ale <strong style={{ color: colors.textPrimary }}>{l.title}</strong>.
-                Vei invata prin exemple practice si exercitii interactive. La finalul lectiei vei putea aplica cunostintele in proiecte reale.
-                <br /><br />
-                Lectia include materiale video, cod interactiv si un quiz final.
+                {l.description || 'Nu exista descriere pentru aceasta lectie.'}
               </p>
             )}
             {tab === 'discussion' && (
