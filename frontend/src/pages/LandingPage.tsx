@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Trophy, Zap, ArrowRight, Star, Users } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import AuthModal from '@/components/AuthModal';
+import { apiClient } from '@/api/client';
 
 export default function LandingPage() {
   const { colors, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const [stats, setStats] = useState({ totalUsers: 0, totalLessons: 0, avgRating: 0 });
+
+  useEffect(() => {
+    apiClient.get('/admin/stats')
+      .then(res => {
+        const d = res.data as any;
+        setStats({ totalUsers: d.totalUsers || 0, totalLessons: d.totalLessons || 0, avgRating: d.avgRating || 0 });
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogin = () => {
     setShowAuth(false);
@@ -162,9 +173,9 @@ export default function LandingPage() {
           borderTop: `1px solid ${colors.border}`, paddingTop: 40,
         }}>
           {[
-            { value: '3,421', label: 'Studenti activi' },
-            { value: '48', label: 'Lectii disponibile' },
-            { value: '4.8', label: 'Rating mediu' },
+            { value: String(stats.totalUsers), label: 'Studenti activi' },
+            { value: String(stats.totalLessons), label: 'Lectii disponibile' },
+            { value: String(stats.avgRating || '—'), label: 'Rating mediu' },
           ].map((s, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-1px', color: colors.blue }}>{s.value}</div>
@@ -220,7 +231,7 @@ export default function LandingPage() {
           Gata sa incepi?
         </h2>
         <p style={{ color: colors.textMuted, marginBottom: 28, fontSize: 14 }}>
-          Alatura-te celor 3,421 de studenti care invata deja pe LearnFlow.
+          Alatura-te studentilor care invata deja pe LearnFlow.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           <button onClick={() => setShowAuth(true)} style={{
