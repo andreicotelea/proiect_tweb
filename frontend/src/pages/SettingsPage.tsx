@@ -312,6 +312,28 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+      {saved && (
+        <div style={{
+          position: 'fixed', top: 20, right: 20, zIndex: 999,
+          padding: '12px 20px', borderRadius: 10,
+          background: colors.success, color: '#fff',
+          fontSize: 13, fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}>
+          Salvat cu succes!
+        </div>
+      )}
+      {error && (
+        <div style={{
+          position: 'fixed', top: 20, right: 20, zIndex: 999,
+          padding: '12px 20px', borderRadius: 10,
+          background: colors.danger, color: '#fff',
+          fontSize: 13, fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}>
+          {error}
+        </div>
+      )}
     </div>
   );
 }
