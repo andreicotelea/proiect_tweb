@@ -254,6 +254,22 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* Footer */}
+      <footer style={{
+        padding: '28px 48px',
+        borderTop: `1px solid ${colors.border}`,
+        background: colors.bgCard,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        fontSize: 12.5, color: colors.textDim,
+      }}>
+        <span>© {new Date().getFullYear()} LearnFlow. Toate drepturile rezervate.</span>
+        <div style={{ display: 'flex', gap: 18 }}>
+          <span style={{ cursor: 'pointer' }}>Termeni</span>
+          <span style={{ cursor: 'pointer' }}>Confidentialitate</span>
+          <span style={{ cursor: 'pointer' }}>Contact</span>
+        </div>
+      </footer>
+
       <AuthModal show={showAuth} onClose={() => setShowAuth(false)} onLogin={handleLogin} />
     </div>
   );
