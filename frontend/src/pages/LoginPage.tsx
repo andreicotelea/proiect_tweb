@@ -68,8 +68,8 @@ export default function LoginPage() {
         fontSize: 11.5, color: colors.textMuted, lineHeight: 1.9,
       }}>
         <span style={{ color: colors.blue, fontWeight: 600 }}>Conturi test:</span><br />
-        🧑‍💻 <strong>user@learnflow.md</strong> / <code>user</code> — Student<br />
-        🛡️ <strong>admin@learnflow.md</strong> / <code>admin</code> — Admin
+        🧑‍💻 <strong>george@learnflow.md</strong> / <code>admin</code> — Student<br />
+        🛡️ <strong>admin1@learnflow.md</strong> / <code>admin</code> — Admin
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
