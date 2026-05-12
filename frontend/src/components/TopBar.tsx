@@ -61,10 +61,6 @@ export default function TopBar({ isLoggedIn, onLogout, onShowAuth }: TopBarProps
               position: 'relative',
             }}>
               <Bell size={17} />
-              <div style={{
-                position: 'absolute', top: 7, right: 7, width: 6, height: 6,
-                borderRadius: '50%', background: colors.blush,
-              }} />
             </button>
             <button onClick={onLogout} style={{
               padding: '7px 14px', borderRadius: 8,
