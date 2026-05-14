@@ -17,7 +17,16 @@ export default function LandingPage() {
         const d = res.data as any;
         setStats({ totalUsers: d.totalUsers || 0, totalLessons: d.totalLessons || 0, avgRating: d.avgRating || 0 });
       })
-      .catch(() => {});
+      .catch(() => {
+        apiClient.get('/lessons').then(res => {
+          const lessons = Array.isArray(res.data) ? res.data : [];
+          setStats(prev => ({ ...prev, totalLessons: lessons.length }));
+        }).catch(() => {});
+        apiClient.get('/leaderboard').then(res => {
+          const users = Array.isArray(res.data) ? res.data : [];
+          setStats(prev => ({ ...prev, totalUsers: users.length }));
+        }).catch(() => {});
+      });
   }, []);
 
   const handleLogin = () => {
