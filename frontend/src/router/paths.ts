@@ -9,7 +9,6 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   CERTIFICATES: '/certificates',
   ADMIN: '/admin',
-  CATEGORIES: 'categories',
   HEALTH: '/health',
   LOGIN: '/login',
   REGISTER: '/register',
@@ -27,6 +26,5 @@ export const ROUTE_SEGMENTS = {
   NOTIFICATIONS: 'notifications',
   CERTIFICATES: 'certificates',
   ADMIN: 'admin',
-  CATEGORIES: 'categories',
   HEALTH: 'health',
 } as const;
