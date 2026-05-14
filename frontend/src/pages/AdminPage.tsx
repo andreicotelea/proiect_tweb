@@ -60,16 +60,16 @@ export default function AdminPage() {
     }
     const fetchData = async () => {
       try {
-        const [statsRes, lessonsRes, catRes, usersRes] = await Promise.all([
+        const [statsRes, lessonsRes, catRes, usersRes] = await Promise.allSettled([
           adminService.getStats(),
           lessonService.getAll(),
           categoryService.getAll(),
           userService.getAll(),
         ]);
-        setStats(statsRes.data as any);
-        setLessons(lessonsRes.data as any);
-        setCategories(catRes.data as any);
-        setUsers(usersRes.data as any);
+        if (statsRes.status === 'fulfilled') setStats(statsRes.value.data as any);
+        if (lessonsRes.status === 'fulfilled') setLessons(lessonsRes.value.data as any);
+        if (catRes.status === 'fulfilled') setCategories(catRes.value.data as any);
+        if (usersRes.status === 'fulfilled') setUsers(usersRes.value.data as any);
       } catch (err) {
         console.error('Failed to fetch admin data:', err);
       } finally {
