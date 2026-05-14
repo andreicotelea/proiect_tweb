@@ -241,8 +241,8 @@ export default function AdminPage() {
       {tab === 'overview' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-            <StatCard icon={Users} label="Total Utilizatori" value={stats.totalUsers.toLocaleString()} trend={12} color={colors.blue} delay={2} />
-            <StatCard icon={Eye} label="Utilizatori Activi" value={stats.activeUsers.toLocaleString()} trend={5} color={colors.steel} delay={3} />
+            <StatCard icon={Users} label="Total Utilizatori" value={stats.totalUsers.toLocaleString()} color={colors.blue} delay={2} />
+            <StatCard icon={Eye} label="Utilizatori Activi" value={stats.activeUsers.toLocaleString()} color={colors.steel} delay={3} />
             <StatCard icon={BookOpen} label="Total Lectii" value={String(stats.totalLessons)} color={colors.blush} delay={4} />
             <StatCard icon={Star} label="Rating Mediu" value={String(stats.avgRating)} color={colors.success} delay={5} />
           </div>

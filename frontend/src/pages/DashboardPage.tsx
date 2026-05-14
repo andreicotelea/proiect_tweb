@@ -82,10 +82,10 @@ export default function DashboardPage() {
 
       {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <StatCard icon={BookOpen} label="Lectii Completate" value={String(completed)} trend={15} color={colors.blue} delay={2} />
-        <StatCard icon={Clock} label="Total Lectii" value={String(lessons.length)} trend={8} color={colors.steel} delay={3} />
-        <StatCard icon={Zap} label="In Progres" value={String(inProgress.length)} trend={40} color={colors.blush} delay={4} />
-        <StatCard icon={Trophy} label="Clasament" value={`${leaderboard.length} studenti`} trend={12} color={colors.success} delay={5} />
+        <StatCard icon={BookOpen} label="Lectii Completate" value={String(completed)} color={colors.blue} delay={2} />
+        <StatCard icon={Clock} label="Total Lectii" value={String(lessons.length)} color={colors.steel} delay={3} />
+        <StatCard icon={Zap} label="In Progres" value={String(inProgress.length)} color={colors.blush} delay={4} />
+        <StatCard icon={Trophy} label="Clasament" value={`${leaderboard.length} studenti`} color={colors.success} delay={5} />
       </div>
 
       {/* In Progress Lessons */}
