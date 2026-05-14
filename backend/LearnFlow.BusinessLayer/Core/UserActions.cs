@@ -11,9 +11,10 @@ namespace LearnFlow.BusinessLayer.Core
         protected List<UserDto> GetAllActionExecution()
         {
             using var context = new AppDbContext();
+            var allUsers = context.Users.ToList();
             var allProgress = context.UserProgress.ToList();
 
-            return context.Users.Select(u => new UserDto
+            return allUsers.Select(u => new UserDto
             {
                 Id = u.Id,
                 Name = u.Name ?? "",
