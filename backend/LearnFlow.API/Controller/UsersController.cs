@@ -21,17 +21,24 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult GetAll([FromQuery] string? search)
         {
-            var data = _users.GetAll();
-
-            if (!string.IsNullOrEmpty(search))
+            try
             {
-                data = data.Where(u =>
-                    (u.Name ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    (u.Email ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
-                ).ToList();
-            }
+                var data = _users.GetAll();
 
-            return Ok(data);
+                if (!string.IsNullOrEmpty(search))
+                {
+                    data = data.Where(u =>
+                        (u.Name ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        (u.Email ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
+                    ).ToList();
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { isSuccess = false, message = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]
