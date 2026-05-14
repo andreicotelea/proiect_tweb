@@ -63,7 +63,7 @@ export default function DashboardPage() {
           borderRadius: '50%', background: `${colors.blush}06`,
         }} />
         <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 7, letterSpacing: '-0.4px' }}>
-          {getGreeting()}
+          {getGreeting()}{user?.name ? `, ${user.name}` : ''}
         </h2>
         <p style={{ color: colors.textMuted, fontSize: 14, maxWidth: 480 }}>
           Ai {inProgress.length} lectii in progres. Continua de unde ai ramas sau exploreaza ceva nou.
