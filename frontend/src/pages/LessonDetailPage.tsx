@@ -187,7 +187,7 @@ export default function LessonDetailPage() {
             {tab === 'discussion' && (
               <div style={{ textAlign: 'center', padding: 36, color: colors.textDim }}>
                 <MessageCircle size={38} style={{ marginBottom: 10, opacity: 0.3 }} />
-                <p>Discutiile sunt disponibile dupa conectare.</p>
+                <p>Sectiunea de discutii va fi disponibila in curand.</p>
               </div>
             )}
             {tab === 'notes' && (
