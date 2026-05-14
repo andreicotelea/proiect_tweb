@@ -63,6 +63,7 @@ export default function LessonDetailPage() {
       if (data.isSuccess) {
         setEnrolled(true);
         setEnrollMsg('Te-ai inrolat cu succes!');
+        setL(prev => prev ? { ...prev, students: (prev.students || 0) + 1 } : prev);
       } else {
         setEnrollMsg(data.message);
       }
