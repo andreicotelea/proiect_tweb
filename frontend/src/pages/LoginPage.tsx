@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -14,10 +14,11 @@ export default function LoginPage() {
   const { loginWithCredentials, isLoggedIn } = useAuth();
   const { colors } = useTheme();
 
-  if (isLoggedIn) {
-    navigate(ROUTES.DASHBOARD, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async () => {
     setError('');
@@ -67,8 +68,8 @@ export default function LoginPage() {
         fontSize: 11.5, color: colors.textMuted, lineHeight: 1.9,
       }}>
         <span style={{ color: colors.blue, fontWeight: 600 }}>Conturi test:</span><br />
-        🧑‍💻 <strong>user@learnflow.md</strong> / <code>user</code> — Student<br />
-        🛡️ <strong>admin@learnflow.md</strong> / <code>admin</code> — Admin
+        🧑‍💻 <strong>george@learnflow.md</strong> / <code>admin</code> — Student<br />
+        🛡️ <strong>admin1@learnflow.md</strong> / <code>admin</code> — Admin
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>

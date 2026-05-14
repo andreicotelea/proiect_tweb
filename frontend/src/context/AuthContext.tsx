@@ -89,6 +89,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = data.token;
       const userDto = data.user;
       localStorage.setItem('lf_token', token);
+      localStorage.removeItem('diblong-auth');
+      localStorage.removeItem('diblong-cart');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       setUser({
         id: userDto.id,
         name: userDto.name,

@@ -17,6 +17,7 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpGet("stats")]
+        [AllowAnonymous]
         public IActionResult GetStats()
         {
             var stats = _admin.GetStats();

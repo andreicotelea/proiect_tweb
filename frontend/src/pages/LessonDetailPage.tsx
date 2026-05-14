@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { lessonService, progressService } from '@/api';
 import { USE_MOCK } from '@/config';
 import { mockLessons } from '@/services/mockData';
+import { apiClient } from '@/api/client';
 import type { Lesson } from '@/types';
 
 export default function LessonDetailPage() {
@@ -18,6 +19,7 @@ export default function LessonDetailPage() {
   const [enrolled, setEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [enrollMsg, setEnrollMsg] = useState('');
+  const [sections, setSections] = useState<{ title: string; duration: string; order: number }[]>([]);
 
   useEffect(() => {
     const numId = Number(id);
@@ -29,6 +31,16 @@ export default function LessonDetailPage() {
       .then(res => setL(res.data as any))
       .catch(() => setL(mockLessons.find(lesson => lesson.id === numId) ?? null));
   }, [id]);
+
+  useEffect(() => {
+    if (!l || USE_MOCK) return;
+    apiClient.get(`/lesson-sections/lesson/${l.id}`)
+      .then(res => {
+        const data = Array.isArray(res.data) ? res.data : [];
+        setSections(data);
+      })
+      .catch(() => setSections([]));
+  }, [l]);
 
   useEffect(() => {
     if (!user || !l || USE_MOCK) return;
@@ -51,6 +63,7 @@ export default function LessonDetailPage() {
       if (data.isSuccess) {
         setEnrolled(true);
         setEnrollMsg('Te-ai inrolat cu succes!');
+        setL(prev => prev ? { ...prev, students: (prev.students || 0) + 1 } : prev);
       } else {
         setEnrollMsg(data.message);
       }
@@ -62,14 +75,6 @@ export default function LessonDetailPage() {
   };
 
   if (!l) return null;
-
-  const sections = [
-    { title: 'Introducere', dur: '5 min', done: true },
-    { title: 'Concepte de baza', dur: '15 min', done: true },
-    { title: 'Exemplu practic', dur: '10 min', done: l.progress >= 50 },
-    { title: 'Exercitiu interactiv', dur: '10 min', done: false },
-    { title: 'Rezumat & Quiz', dur: '5 min', done: false },
-  ];
 
   const tabs = [
     { id: 'content', label: 'Continut', icon: FileText },
@@ -97,7 +102,7 @@ export default function LessonDetailPage() {
             position: 'relative',
             background: `linear-gradient(135deg, ${colors.bgElevated}, ${colors.bgHover})`,
           }}>
-            {l.videoUrl ? (
+            {l.videoUrl && (l.videoUrl.includes('youtube.com') || l.videoUrl.includes('youtu.be')) ? (
               <iframe
                 width="100%" height="100%"
                 src={l.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/').split('&')[0]}
@@ -131,7 +136,7 @@ export default function LessonDetailPage() {
           </div>
 
           {/* Enroll Button */}
-          {isLoggedIn && !USE_MOCK && (
+          {isLoggedIn && !USE_MOCK && user?.role !== 'admin' && (
             <div className="animate-in delay-3" style={{ marginBottom: 18 }}>
               {enrolled ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '10px 18px', borderRadius: 9, background: `${colors.success}15`, color: colors.success, fontSize: 13.5, fontWeight: 600 }}>
@@ -177,16 +182,13 @@ export default function LessonDetailPage() {
           }}>
             {tab === 'content' && (
               <p style={{ color: colors.textMuted, lineHeight: 1.8, fontSize: 13.5 }}>
-                Aceasta lectie acopera conceptele fundamentale ale <strong style={{ color: colors.textPrimary }}>{l.title}</strong>.
-                Vei invata prin exemple practice si exercitii interactive. La finalul lectiei vei putea aplica cunostintele in proiecte reale.
-                <br /><br />
-                Lectia include materiale video, cod interactiv si un quiz final.
+                {l.description || 'Nu exista descriere pentru aceasta lectie.'}
               </p>
             )}
             {tab === 'discussion' && (
               <div style={{ textAlign: 'center', padding: 36, color: colors.textDim }}>
                 <MessageCircle size={38} style={{ marginBottom: 10, opacity: 0.3 }} />
-                <p>Discutiile sunt disponibile dupa conectare.</p>
+                <p>Sectiunea de discutii va fi disponibila in curand.</p>
               </div>
             )}
             {tab === 'notes' && (
@@ -208,26 +210,30 @@ export default function LessonDetailPage() {
           }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 14 }}>Sectiuni</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {sections.map((s, i) => (
-                <div key={i} style={{
-                  display: 'flex', alignItems: 'center', gap: 11, padding: '11px 12px',
-                  borderRadius: 9, background: i === 2 && l.progress < 100 ? colors.blueGlow : 'transparent',
-                  cursor: 'pointer',
-                }}>
-                  <div style={{
-                    width: 26, height: 26, borderRadius: 7, display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    background: s.done ? 'rgba(109,191,160,0.18)' : colors.bgElevated,
-                    color: s.done ? colors.success : colors.textDim,
-                  }}>
-                    {s.done ? <Check size={13} /> : <span style={{ fontSize: 11.5 }}>{i + 1}</span>}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500, color: s.done ? colors.textMuted : colors.textPrimary }}>{s.title}</div>
-                    <div style={{ fontSize: 10.5, color: colors.textDim }}>{s.dur}</div>
-                  </div>
+              {sections.length === 0 ? (
+                <div style={{ padding: '18px 12px', color: colors.textDim, fontSize: 12.5, textAlign: 'center' }}>
+                  Nu exista sectiuni disponibile.
                 </div>
-              ))}
+              ) : (
+                sections.map((s, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 11, padding: '11px 12px',
+                    borderRadius: 9, background: 'transparent', cursor: 'pointer',
+                  }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: 7, display: 'flex',
+                      alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      background: colors.bgElevated, color: colors.textDim,
+                    }}>
+                      <span style={{ fontSize: 11.5 }}>{i + 1}</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 500, color: colors.textPrimary }}>{s.title}</div>
+                      <div style={{ fontSize: 10.5, color: colors.textDim }}>{s.duration}</div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Progress bar */}

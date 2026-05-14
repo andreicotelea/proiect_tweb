@@ -20,16 +20,30 @@ namespace LearnFlow.API.Controller
         [HttpGet("user/{userId}")]
         public IActionResult GetByUser(int userId)
         {
-            var data = _notifications.GetByUser(userId);
-            return Ok(data);
+            try
+            {
+                var data = _notifications.GetByUser(userId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new List<object>());
+            }
         }
 
         [HttpGet]
         [Authorize(Roles = "admin")]
         public IActionResult GetAll()
         {
-            var data = _notifications.GetAll();
-            return Ok(data);
+            try
+            {
+                var data = _notifications.GetAll();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { isSuccess = false, message = ex.Message });
+            }
         }
 
         [HttpPost]

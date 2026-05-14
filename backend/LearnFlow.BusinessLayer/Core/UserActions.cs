@@ -11,15 +11,16 @@ namespace LearnFlow.BusinessLayer.Core
         protected List<UserDto> GetAllActionExecution()
         {
             using var context = new AppDbContext();
+            var allUsers = context.Users.ToList();
             var allProgress = context.UserProgress.ToList();
 
-            return context.Users.Select(u => new UserDto
+            return allUsers.Select(u => new UserDto
             {
                 Id = u.Id,
-                Name = u.Name,
-                Email = u.Email,
-                Role = u.Role,
-                Avatar = u.Avatar,
+                Name = u.Name ?? "",
+                Email = u.Email ?? "",
+                Role = u.Role ?? "student",
+                Avatar = u.Avatar ?? "U",
                 CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd"),
                 TotalPoints = allProgress.Where(p => p.UserId == u.Id).Sum(p => p.PercentComplete) * 10,
                 Streak = allProgress.Count(p => p.UserId == u.Id && p.PercentComplete >= 100),

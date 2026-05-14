@@ -41,8 +41,17 @@ export const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
             position: 'fixed', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 50,
             background: 'rgba(239, 68, 68, 0.9)', border: '1px solid #f87171',
             borderRadius: 8, padding: '12px 24px', color: 'white', fontSize: 14, fontWeight: 600,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
           }}>
             Acces interzis — necesită rol de {requiredRole}.
+            <button onClick={() => window.history.back()} style={{
+              marginTop: 16, padding: '10px 22px', borderRadius: 9,
+              border: '1px solid #444', background: 'transparent',
+              color: '#ccc', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13.5, fontWeight: 500,
+            }}>
+              ← Inapoi
+            </button>
           </div>
         )}
         {shouldRedirect && <Navigate to={ROUTES.DASHBOARD} replace />}

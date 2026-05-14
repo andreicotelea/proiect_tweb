@@ -1,4 +1,4 @@
-import { Clock, Star, Users, Check, Lock, ArrowRight } from 'lucide-react';
+import { Clock, Star, Users, Check, Lock, ArrowRight, BookOpen } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { Lesson } from '@/types';
 
@@ -34,7 +34,7 @@ export default function LessonCard({ lesson: l, delay = 1, onClick }: LessonCard
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 44, position: 'relative',
       }}>
-        {l.locked ? <Lock size={30} color={colors.textDim} /> : l.thumbnail}
+        {l.locked ? <Lock size={30} color={colors.textDim} /> : <BookOpen size={30} color={colors.blue} />}
 
         {l.progress > 0 && !l.locked && (
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: colors.bgElevated }}>

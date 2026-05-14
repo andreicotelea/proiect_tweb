@@ -41,6 +41,13 @@ export default function DashboardPage() {
   const inProgress = lessons.filter(l => l.progress > 0 && l.progress < 100);
   const completed = lessons.filter(l => l.progress >= 100).length;
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Buna dimineata!';
+    if (hour < 18) return 'Buna ziua!';
+    return 'Buna seara!';
+  };
+
   if (loading) return <div style={{ padding: 28, color: colors.textMuted }}>Se incarca...</div>;
 
   return (
@@ -56,7 +63,7 @@ export default function DashboardPage() {
           borderRadius: '50%', background: `${colors.blush}06`,
         }} />
         <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 7, letterSpacing: '-0.4px' }}>
-          Buna dimineata!
+          {getGreeting()}{user?.name ? `, ${user.name}` : ''}
         </h2>
         <p style={{ color: colors.textMuted, fontSize: 14, maxWidth: 480 }}>
           Ai {inProgress.length} lectii in progres. Continua de unde ai ramas sau exploreaza ceva nou.
@@ -75,10 +82,10 @@ export default function DashboardPage() {
 
       {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <StatCard icon={BookOpen} label="Lectii Completate" value={String(completed)} trend={15} color={colors.blue} delay={2} />
-        <StatCard icon={Clock} label="Total Lectii" value={String(lessons.length)} trend={8} color={colors.steel} delay={3} />
-        <StatCard icon={Zap} label="In Progres" value={String(inProgress.length)} trend={40} color={colors.blush} delay={4} />
-        <StatCard icon={Trophy} label="Clasament" value={`${leaderboard.length} studenti`} trend={12} color={colors.success} delay={5} />
+        <StatCard icon={BookOpen} label="Lectii Completate" value={String(completed)} color={colors.blue} delay={2} />
+        <StatCard icon={Clock} label="Total Lectii" value={String(lessons.length)} color={colors.steel} delay={3} />
+        <StatCard icon={Zap} label="In Progres" value={String(inProgress.length)} color={colors.blush} delay={4} />
+        <StatCard icon={Trophy} label="Clasament" value={`${leaderboard.length} studenti`} color={colors.success} delay={5} />
       </div>
 
       {/* In Progress Lessons */}

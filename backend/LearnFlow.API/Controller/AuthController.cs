@@ -21,6 +21,9 @@ namespace LearnFlow.API.Controller
         [EnableRateLimiting("auth")]
         public IActionResult Login([FromBody] UserLoginDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ActionResponse { IsSuccess = false, Message = "Date de autentificare invalide." });
+
             var result = _auth.Login(dto);
 
             if (result == null)
@@ -37,6 +40,9 @@ namespace LearnFlow.API.Controller
         [EnableRateLimiting("auth")]
         public IActionResult Register([FromBody] UserRegisterDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ActionResponse { IsSuccess = false, Message = "Date de inregistrare invalide." });
+
             var result = _auth.Register(dto);
 
             if (!result.IsSuccess)

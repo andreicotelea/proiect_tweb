@@ -126,3 +126,63 @@ a:hover {
   background: rgba(46, 122, 184, 0.3);
   color: var(--text);
 }
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 68px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none !important;
+  }
+
+  div[style*="marginLeft: 230"] {
+    margin-left: 0 !important;
+  }
+
+  div[style*="margin-left: 230"] {
+    margin-left: 0 !important;
+  }
+
+  div[style*="gridTemplateColumns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  div[style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="gridTemplateColumns: 1fr 340px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  nav[style] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  footer[style] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  div[style*="gridTemplateColumns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="gridTemplateColumns: repeat(4"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  h1[style*="fontSize: 19"] {
+    font-size: 16px !important;
+  }
+}

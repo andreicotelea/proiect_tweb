@@ -24,18 +24,23 @@ namespace LearnFlow.API.Controller
             var data = _categories.GetAll();
             return Ok(data);
         }
-[HttpGet("{id}")]
+
+        [HttpGet("{id}")]
         [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             var data = _categories.GetById(id);
-            if (data == null) return NotFound(new { IsSuccess = false, Message = "Categoria nu a fost gasita." });
+            if (data == null)
+                return NotFound(new { isSuccess = false, message = "Categoria nu a fost gasita." });
             return Ok(data);
         }
         [HttpPost]
         [Authorize(Roles = "admin")]
         public IActionResult Create([FromBody] CreateCategoryDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _categories.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return StatusCode(201, result);
@@ -45,6 +50,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Update(int id, [FromBody] CreateCategoryDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _categories.Update(id, dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);

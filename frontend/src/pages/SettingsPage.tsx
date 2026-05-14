@@ -114,7 +114,7 @@ export default function SettingsPage() {
   });
 
   return (
-    <div style={{ padding: 28, maxWidth: 720, margin: '0 auto' }}>
+    <div style={{ padding: 28, maxWidth: 620, margin: '0 auto' }}>
       {/* Tabs */}
       <div className="animate-in delay-1" style={{ display: 'flex', gap: 4, marginBottom: 28 }}>
         {tabs.map(t => {
@@ -310,6 +310,28 @@ export default function SettingsPage() {
               <div style={{ marginTop: 12, color: colors.danger, fontSize: 12.5 }}>{error}</div>
             )}
           </div>
+        </div>
+      )}
+      {saved && (
+        <div style={{
+          position: 'fixed', top: 20, right: 20, zIndex: 999,
+          padding: '12px 20px', borderRadius: 10,
+          background: colors.success, color: '#fff',
+          fontSize: 13, fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}>
+          Salvat cu succes!
+        </div>
+      )}
+      {error && (
+        <div style={{
+          position: 'fixed', top: 20, right: 20, zIndex: 999,
+          padding: '12px 20px', borderRadius: 10,
+          background: colors.danger, color: '#fff',
+          fontSize: 13, fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}>
+          {error}
         </div>
       )}
     </div>

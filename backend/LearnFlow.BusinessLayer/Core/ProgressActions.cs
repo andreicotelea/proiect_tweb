@@ -70,6 +70,7 @@ namespace LearnFlow.BusinessLayer.Core
                 LastAccessedAt = DateTime.UtcNow,
             };
             context.UserProgress.Add(progress);
+            lesson.StudentCount += 1;
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Te-ai inrolat cu succes." };
         }

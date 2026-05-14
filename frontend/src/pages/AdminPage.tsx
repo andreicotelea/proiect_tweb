@@ -4,7 +4,6 @@ import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
 import { lessonService, categoryService, adminService, userService, apiClient } from '@/api';
 import { USE_MOCK } from '@/config';
-import { mockAdminStats } from '@/services/mockData';
 import type { Lesson, AdminStats, Category } from '@/types';
 
 interface UserItem { id: number; name: string; email: string; role: string; avatar: string; createdAt: string; }
@@ -12,7 +11,14 @@ interface UserItem { id: number; name: string; email: string; role: string; avat
 export default function AdminPage() {
   const [tab, setTab] = useState('overview');
   const { colors } = useTheme();
-  const [stats, setStats] = useState<AdminStats>(mockAdminStats);
+  const [stats, setStats] = useState<AdminStats>({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalLessons: 0,
+    totalCategories: 0,
+    avgRating: 0,
+    completionRate: 0,
+  });
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -54,16 +60,16 @@ export default function AdminPage() {
     }
     const fetchData = async () => {
       try {
-        const [statsRes, lessonsRes, catRes, usersRes] = await Promise.all([
+        const [statsRes, lessonsRes, catRes, usersRes] = await Promise.allSettled([
           adminService.getStats(),
           lessonService.getAll(),
           categoryService.getAll(),
           userService.getAll(),
         ]);
-        setStats(statsRes.data as any);
-        setLessons(lessonsRes.data as any);
-        setCategories(catRes.data as any);
-        setUsers(usersRes.data as any);
+        if (statsRes.status === 'fulfilled') setStats(statsRes.value.data as any);
+        if (lessonsRes.status === 'fulfilled') setLessons(lessonsRes.value.data as any);
+        if (catRes.status === 'fulfilled') setCategories(catRes.value.data as any);
+        if (usersRes.status === 'fulfilled') setUsers(usersRes.value.data as any);
       } catch (err) {
         console.error('Failed to fetch admin data:', err);
       } finally {
@@ -235,8 +241,8 @@ export default function AdminPage() {
       {tab === 'overview' && (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-            <StatCard icon={Users} label="Total Utilizatori" value={stats.totalUsers.toLocaleString()} trend={12} color={colors.blue} delay={2} />
-            <StatCard icon={Eye} label="Utilizatori Activi" value={stats.activeUsers.toLocaleString()} trend={5} color={colors.steel} delay={3} />
+            <StatCard icon={Users} label="Total Utilizatori" value={stats.totalUsers.toLocaleString()} color={colors.blue} delay={2} />
+            <StatCard icon={Eye} label="Utilizatori Activi" value={stats.activeUsers.toLocaleString()} color={colors.steel} delay={3} />
             <StatCard icon={BookOpen} label="Total Lectii" value={String(stats.totalLessons)} color={colors.blush} delay={4} />
             <StatCard icon={Star} label="Rating Mediu" value={String(stats.avgRating)} color={colors.success} delay={5} />
           </div>
@@ -321,7 +327,7 @@ export default function AdminPage() {
           <div style={{ padding: '18px 22px', borderBottom: `1px solid ${colors.border}` }}>
             <h3 style={{ fontSize: 15, fontWeight: 700 }}>Utilizatori ({USE_MOCK ? stats.totalUsers : users.length})</h3>
           </div>
-          {(USE_MOCK ? mockLeaderboard.map(u => ({ id: 0, name: u.name, email: '', role: 'student', avatar: u.avatar, createdAt: '' })) : users).map((u, i, arr) => (
+          {users.map((u, i, arr) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: i < arr.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
               <span style={{ width: 32, height: 32, borderRadius: 8, background: `${colors.blue}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: colors.blue }}>{u.avatar || 'U'}</span>
               <div style={{ flex: 1 }}>

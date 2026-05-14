@@ -34,7 +34,7 @@ namespace LearnFlow.API.Controller
         {
             var lesson = _lessons.GetById(id);
             if (lesson == null)
-                return NotFound();
+                return NotFound(new { isSuccess = false, message = "Lectia nu a fost gasita." });
 
             return Ok(lesson);
         }
@@ -43,6 +43,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Create([FromBody] CreateLessonDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _lessons.Create(dto);
             if (!result.IsSuccess) return BadRequest(result);
             return StatusCode(201, result);
@@ -52,6 +55,9 @@ namespace LearnFlow.API.Controller
         [Authorize(Roles = "admin")]
         public IActionResult Update(int id, [FromBody] UpdateLessonDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _lessons.Update(id, dto);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
