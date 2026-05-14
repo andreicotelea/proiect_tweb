@@ -13,7 +13,7 @@ namespace LearnFlow.BusinessLayer.Core
         protected List<LessonDto> GetAllActionExecution(string? category, string? difficulty, string? search)
         {
             using var context = new AppDbContext();
-            var query = context.Lessons.Include(l => l.Category).AsQueryable();
+            var query = context.Lessons.Include(l => l.Category).Include(l => l.Progress).AsQueryable();
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(l => l.Category.Name == category);
             if (!string.IsNullOrEmpty(difficulty))
@@ -26,7 +26,7 @@ namespace LearnFlow.BusinessLayer.Core
         protected LessonDto? GetByIdActionExecution(int id)
         {
             using var context = new AppDbContext();
-            var lesson = context.Lessons.Include(l => l.Category).FirstOrDefault(l => l.Id == id);
+            var lesson = context.Lessons.Include(l => l.Category).Include(l => l.Progress).FirstOrDefault(l => l.Id == id);
             return lesson == null ? null : MapToDto(lesson);
         }
 
@@ -119,7 +119,7 @@ namespace LearnFlow.BusinessLayer.Core
             Difficulty = l.Difficulty,
             Duration = l.Duration,
             Rating = l.Rating,
-            Students = l.StudentCount,
+            Students = l.Progress != null ? l.Progress.Count : l.StudentCount,
             Profesor = l.ProfesorName,
             Thumbnail = l.Thumbnail,
             Locked = l.IsLocked,
