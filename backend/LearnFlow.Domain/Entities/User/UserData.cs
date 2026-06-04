@@ -28,7 +28,7 @@ public class UserData
     [StringLength(20)]
     public string Role { get; set; } = "student";
 
-    [StringLength(10)]
+    [StringLength(500)]
     public string Avatar { get; set; } = "U";
 
     [DataType(DataType.DateTime)]
