@@ -1,6 +1,7 @@
 using LearnFlow.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using LearnFlow.API.Extensions;
 
 namespace LearnFlow.API.Controller
 {
@@ -62,9 +63,14 @@ namespace LearnFlow.API.Controller
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
+            var currentUserId = User.GetId();
+            var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            if (currentUserId != id && currentUserRole != "admin")
+            {
+                return Forbid();
+            }
             var result = _users.Delete(id);
             if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
