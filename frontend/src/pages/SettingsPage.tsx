@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { User, Lock, Bell, Trash2, Save, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { userService } from '@/api';
 import { USE_MOCK } from '@/config';
 
 export default function SettingsPage() {
   const { colors } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [tab, setTab] = useState('profile');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+  const [avatarInput, setAvatarInput] = useState('');
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [currentPass, setCurrentPass] = useState('');
@@ -22,6 +27,58 @@ export default function SettingsPage() {
   const [notifAchievement, setNotifAchievement] = useState(true);
   const [notifLeaderboard, setNotifLeaderboard] = useState(false);
   const [error, setError] = useState('');
+
+  const handleChangeAvatar = () => {
+    setAvatarInput(avatar.startsWith('http') ? avatar : '');
+    setAvatarModalOpen(true);
+  };
+
+  const handleSaveAvatar = async () => {
+    if (!user || !avatarInput) return;
+    setError('');
+    if (USE_MOCK) {
+      setAvatar(avatarInput);
+      setAvatarModalOpen(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      return;
+    }
+    try {
+      const res = await userService.updateProfile(user.id, { name, email, avatar: avatarInput });
+      const data = res.data as any;
+      if (data.isSuccess) {
+        setAvatar(avatarInput);
+        setAvatarModalOpen(false);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        setError(data.message);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la salvarea avatarului.');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    const confirmDelete = window.confirm('Esti sigur ca vrei sa stergi contul? Aceasta actiune nu poate fi anulata.');
+    if (!confirmDelete) return;
+    const doubleCheck = window.confirm('Confirmare finala: TOATE datele tale vor fi pierdute permanent. Continui?');
+    if (!doubleCheck) return;
+    setError('');
+    if (USE_MOCK) {
+      logout();
+      navigate('/login');
+      return;
+    }
+    try {
+      await userService.delete(user.id);
+      logout();
+      navigate('/login');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la stergerea contului.');
+    }
+  };
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -146,14 +203,14 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 28 }}>
               <div style={{
                 width: 72, height: 72, borderRadius: 16,
-                background: `linear-gradient(135deg, ${colors.blue}, ${colors.blush})`,
+                background: avatar.startsWith('http') ? `url(${avatar}) center/cover` : `linear-gradient(135deg, ${colors.blue}, ${colors.blush})`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 24, fontWeight: 800, color: '#fff',
+                fontSize: 24, fontWeight: 800, color: '#fff', overflow: 'hidden',
               }}>
-                {user?.name?.split(' ').map(w => w[0]).join('') || 'U'}
+                {!avatar.startsWith('http') && (user?.name?.split(' ').map(w => w[0]).join('') || 'U')}
               </div>
               <div>
-                <button style={{
+                <button onClick={handleChangeAvatar} style={{
                   padding: '8px 16px', borderRadius: 8, fontSize: 12.5,
                   border: `1px solid ${colors.border}`, background: 'transparent',
                   color: colors.textMuted, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
@@ -249,7 +306,7 @@ export default function SettingsPage() {
             <p style={{ fontSize: 13, color: colors.textMuted, marginBottom: 18 }}>
               Odata sters, contul nu poate fi recuperat. Toate datele vor fi pierdute permanent.
             </p>
-            <button style={{
+            <button onClick={handleDeleteAccount} style={{
               padding: '11px 24px', borderRadius: 9,
               border: `1px solid ${colors.danger}40`,
               background: `${colors.danger}10`, color: colors.danger,
@@ -332,6 +389,90 @@ export default function SettingsPage() {
           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
         }}>
           {error}
+        </div>
+      )}
+
+      {/* Avatar Modal */}
+      {avatarModalOpen && (
+        <div onClick={() => setAvatarModalOpen(false)} style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          animation: 'fadeIn 0.18s ease',
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: colors.bgCard, borderRadius: 16, padding: 28,
+            width: '92%', maxWidth: 440,
+            border: `1px solid ${colors.border}`,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+          }}>
+            <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Schimba Avatar</h3>
+            <p style={{ fontSize: 12.5, color: colors.textMuted, marginBottom: 20 }}>
+              Introdu un URL public al imaginii (jpg, png, etc.)
+            </p>
+
+            {/* Preview */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+              <div style={{
+                width: 96, height: 96, borderRadius: 18,
+                background: avatarInput.startsWith('http')
+                  ? `url(${avatarInput}) center/cover`
+                  : `linear-gradient(135deg, ${colors.blue}, ${colors.blush})`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 32, fontWeight: 800, color: '#fff',
+                border: `2px solid ${colors.border}`,
+              }}>
+                {!avatarInput.startsWith('http') && (user?.name?.split(' ').map(w => w[0]).join('') || 'U')}
+              </div>
+            </div>
+
+            <input
+              autoFocus
+              value={avatarInput}
+              onChange={e => setAvatarInput(e.target.value)}
+              placeholder="https://i.pravatar.cc/150"
+              style={inputStyle}
+              onKeyDown={e => e.key === 'Enter' && handleSaveAvatar()}
+            />
+
+            {/* Suggested avatars */}
+            <div style={{ marginTop: 14 }}>
+              <div style={{ fontSize: 11.5, color: colors.textDim, marginBottom: 8 }}>Sau alege unul:</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {[1, 5, 12, 25, 33, 47, 56, 68].map(n => {
+                  const url = `https://i.pravatar.cc/150?img=${n}`;
+                  return (
+                    <div key={n} onClick={() => setAvatarInput(url)} style={{
+                      width: 44, height: 44, borderRadius: 10,
+                      background: `url(${url}) center/cover`,
+                      cursor: 'pointer',
+                      border: `2px solid ${avatarInput === url ? colors.blue : 'transparent'}`,
+                      transition: 'border 0.15s',
+                    }} />
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
+              <button onClick={() => setAvatarModalOpen(false)} style={{
+                padding: '10px 18px', borderRadius: 9,
+                border: `1px solid ${colors.border}`, background: 'transparent',
+                color: colors.textMuted, fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+              }}>Anuleaza</button>
+              <button onClick={handleSaveAvatar} disabled={!avatarInput} style={{
+                padding: '10px 22px', borderRadius: 9, border: 'none',
+                background: avatarInput
+                  ? `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`
+                  : colors.bgElevated,
+                color: '#fff', fontSize: 13, fontWeight: 600,
+                cursor: avatarInput ? 'pointer' : 'not-allowed',
+                fontFamily: "'DM Sans', sans-serif",
+                boxShadow: avatarInput ? `0 4px 18px ${colors.blueGlow}` : 'none',
+              }}>Salveaza</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -13,7 +13,7 @@ namespace LearnFlow.Domain.Models.User
         [StringLength(150)]
         public string Email { get; set; } = string.Empty;
 
-        [StringLength(10)]
+        [StringLength(500)]
         public string Avatar { get; set; } = "U";
     }
 }
