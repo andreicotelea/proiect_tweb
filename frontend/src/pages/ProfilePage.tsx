@@ -3,7 +3,8 @@ import { BookOpen, Clock, Trophy, Award, Edit, Check, Play, CheckCircle } from '
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
-import { progressService, achievementService } from '@/api';
+import { progressService, achievementService, lessonService } from '@/api';
+import type { Lesson } from '@/types';
 import { USE_MOCK } from '@/config';
 import { mockAchievements } from '@/services/mockData';
 
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const [totalPoints, setTotalPoints] = useState(0);
   const [achievements, setAchievements] = useState<any[]>([]);
   const [recentProgress, setRecentProgress] = useState<any[]>([]);
+  const [lessonsMap, setLessonsMap] = useState<Record<number, Lesson>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,16 +26,21 @@ export default function ProfilePage() {
     }
     const fetchData = async () => {
       try {
-        const [progRes, achRes] = await Promise.all([
+        const [progRes, achRes, lessonsRes] = await Promise.all([
           progressService.getByUser(user.id),
           achievementService.getAll(),
+          lessonService.getAll(),
         ]);
         const progData = Array.isArray(progRes.data) ? progRes.data as any[] : [];
-        const completed = progData.filter((p: any) => p.percentComplete >= 100).length;
-        const points = progData.reduce((sum: number, p: any) => sum + (p.percentComplete * 10), 0);
+        const lessonsData = Array.isArray(lessonsRes.data) ? lessonsRes.data as Lesson[] : [];
+        const lMap = lessonsData.reduce((acc, l) => { acc[l.id] = l; return acc; }, {} as Record<number, Lesson>);
+        setLessonsMap(lMap);
+        const validProgress = progData.filter((p: any) => lMap[p.lessonId]);
+        const completed = validProgress.filter((p: any) => p.percentComplete >= 100).length;
+        const points = validProgress.reduce((sum: number, p: any) => sum + (p.percentComplete * 10), 0);
         setCompletedLessons(completed);
         setTotalPoints(points);
-        setRecentProgress(progData.slice(0, 3));
+        setRecentProgress(validProgress.slice(0, 3));
 
         const achData = Array.isArray(achRes.data) ? achRes.data as any[] : [];
         setAchievements(achData.map(a => ({
@@ -150,7 +157,7 @@ export default function ProfilePage() {
                     <Icon size={15} color={color} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <span style={{ fontSize: 13.5 }}>Lectia #{p.lessonId} — <strong>{p.percentComplete}%</strong></span>
+                    <span style={{ fontSize: 13.5 }}>{lessonsMap[p.lessonId]?.title || `Lectia #${p.lessonId}`} — <strong>{p.percentComplete}%</strong></span>
                   </div>
                   <span style={{ fontSize: 11.5, color: colors.textDim }}>{p.lastAccessedAt || ''}</span>
                 </div>
