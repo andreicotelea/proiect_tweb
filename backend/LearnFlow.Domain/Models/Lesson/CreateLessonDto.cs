@@ -29,6 +29,10 @@ namespace LearnFlow.Domain.Models.Lesson
         public string Thumbnail { get; set; } = "DF";
 
         public string? VideoUrl { get; set; }
+
+        [StringLength(500)]
+        public string? CertificateUrl { get; set; }
+
         public bool IsLocked { get; set; } = false;
     }
 }

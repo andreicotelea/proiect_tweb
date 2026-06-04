@@ -43,6 +43,7 @@ namespace LearnFlow.BusinessLayer.Core
                 ProfesorName = dto.ProfesorName,
                 Thumbnail = dto.Thumbnail,
                 VideoUrl = dto.VideoUrl,
+                CertificateUrl = dto.CertificateUrl,
                 IsLocked = dto.IsLocked,
                 CreatedAt = DateTime.UtcNow,
             };
@@ -65,6 +66,7 @@ namespace LearnFlow.BusinessLayer.Core
             if (dto.ProfesorName != null) lesson.ProfesorName = dto.ProfesorName;
             if (dto.Thumbnail != null) lesson.Thumbnail = dto.Thumbnail;
             if (dto.VideoUrl != null) lesson.VideoUrl = dto.VideoUrl;
+            if (dto.CertificateUrl != null) lesson.CertificateUrl = dto.CertificateUrl;
             if (dto.IsLocked.HasValue) lesson.IsLocked = dto.IsLocked.Value;
             context.SaveChanges();
             return new ActionResponse { IsSuccess = true, Message = "Lectie actualizata." };
@@ -124,6 +126,7 @@ namespace LearnFlow.BusinessLayer.Core
             Thumbnail = l.Thumbnail,
             Locked = l.IsLocked,
             VideoUrl = l.VideoUrl,
+            CertificateUrl = l.CertificateUrl,
         };
     }
 }

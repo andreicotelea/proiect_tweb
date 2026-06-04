@@ -33,6 +33,7 @@ export interface Lesson {
   thumbnail: string;
   locked: boolean;
   videoUrl?: string;
+  certificateUrl?: string;
   sections?: LessonSection[];
 }
 

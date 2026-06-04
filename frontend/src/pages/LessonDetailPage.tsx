@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight, Play, User, Clock, Star, Users, FileText, MessageCircle, Edit, Check } from 'lucide-react';
+import { ChevronRight, Play, User, Clock, Star, Users, FileText, MessageCircle, Edit, Check, Award, Download } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +20,8 @@ export default function LessonDetailPage() {
   const [enrolling, setEnrolling] = useState(false);
   const [enrollMsg, setEnrollMsg] = useState('');
   const [sections, setSections] = useState<{ title: string; duration: string; order: number }[]>([]);
+  const [myPercent, setMyPercent] = useState(0);
+  const [marking, setMarking] = useState(false);
 
   useEffect(() => {
     const numId = Number(id);
@@ -49,10 +51,25 @@ export default function LessonDetailPage() {
         const data = res.data as any;
         const arr = Array.isArray(data) ? data : [];
         const found = arr.find((p: any) => p.lessonId === l.id);
-        if (found) setEnrolled(true);
+        if (found) {
+          setEnrolled(true);
+          setMyPercent(found.percentComplete ?? 0);
+        }
       })
       .catch(() => {});
   }, [user, l]);
+
+  const handleMarkComplete = async () => {
+    if (!user || !l) return;
+    setMarking(true);
+    try {
+      await progressService.update({ userId: user.id, lessonId: l.id, percentComplete: 100 });
+      setMyPercent(100);
+    } catch {
+      // ignore
+    }
+    setMarking(false);
+  };
 
   const handleEnroll = async () => {
     if (!user || !l) return;
@@ -157,6 +174,75 @@ export default function LessonDetailPage() {
             </div>
           )}
 
+          {/* Mark as complete button — only for enrolled non-admin users */}
+          {isLoggedIn && !USE_MOCK && user?.role !== 'admin' && enrolled && myPercent < 100 && (
+            <div className="animate-in delay-3" style={{ marginBottom: 18 }}>
+              <button onClick={handleMarkComplete} disabled={marking} style={{
+                padding: '10px 20px', borderRadius: 9, border: `1px solid ${colors.success}40`,
+                background: `${colors.success}10`, color: colors.success,
+                fontSize: 13, fontWeight: 600, cursor: marking ? 'not-allowed' : 'pointer',
+                fontFamily: "'DM Sans', sans-serif", display: 'inline-flex', alignItems: 'center', gap: 7,
+              }}>
+                <Check size={15} /> {marking ? 'Se proceseaza...' : 'Marcheaza ca Terminat'}
+              </button>
+            </div>
+          )}
+
+          {/* Certificate — only visible when 100% complete */}
+          {isLoggedIn && !USE_MOCK && enrolled && myPercent >= 100 && l.certificateUrl && (
+            <div className="animate-in delay-3" style={{
+              marginBottom: 22, padding: 22, borderRadius: 14,
+              background: `linear-gradient(135deg, ${colors.blue}10, ${colors.blush}10)`,
+              border: `1px solid ${colors.blue}30`, position: 'relative', overflow: 'hidden',
+            }}>
+              <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, height: 3,
+                background: `linear-gradient(90deg, ${colors.blue}, ${colors.blush})`,
+              }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 11,
+                  background: `linear-gradient(135deg, ${colors.blue}25, ${colors.blush}20)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Award size={22} color={colors.blue} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Felicitari! Ai obtinut certificatul</h3>
+                  <p style={{ fontSize: 12.5, color: colors.textMuted }}>Ai finalizat 100% din aceasta lectie.</p>
+                </div>
+              </div>
+              <img src={l.certificateUrl} alt="Certificat" style={{
+                width: '100%', borderRadius: 10, border: `1px solid ${colors.border}`,
+                maxHeight: 320, objectFit: 'contain', background: '#fff', marginBottom: 14,
+              }} />
+              <a href={l.certificateUrl} download target="_blank" rel="noreferrer" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 7,
+                padding: '10px 20px', borderRadius: 9, border: 'none',
+                background: `linear-gradient(135deg, ${colors.blue}, ${colors.blueSoft})`,
+                color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                fontFamily: "'DM Sans', sans-serif", textDecoration: 'none',
+                boxShadow: `0 4px 18px ${colors.blueGlow}`,
+              }}>
+                <Download size={15} /> Descarca Certificatul
+              </a>
+            </div>
+          )}
+
+          {/* Locked certificate hint — encourages user to complete */}
+          {isLoggedIn && !USE_MOCK && enrolled && myPercent < 100 && l.certificateUrl && (
+            <div className="animate-in delay-3" style={{
+              marginBottom: 22, padding: 16, borderRadius: 12,
+              background: colors.bgCard, border: `1px dashed ${colors.border}`,
+              display: 'flex', alignItems: 'center', gap: 12,
+            }}>
+              <Award size={20} color={colors.textDim} />
+              <span style={{ fontSize: 12.5, color: colors.textMuted }}>
+                Termina lectia 100% pentru a debloca certificatul. (Progres: {myPercent}%)
+              </span>
+            </div>
+          )}
+
           {/* Tabs */}
           <div className="animate-in delay-4" style={{ display: 'flex', gap: 3, marginBottom: 22, borderBottom: `1px solid ${colors.border}` }}>
             {tabs.map(t => {
@@ -240,11 +326,11 @@ export default function LessonDetailPage() {
             <div style={{ marginTop: 18, paddingTop: 18, borderTop: `1px solid ${colors.border}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 7, fontSize: 12.5 }}>
                 <span style={{ color: colors.textMuted }}>Progres</span>
-                <span style={{ fontWeight: 600, color: colors.blue }}>{l.progress}%</span>
+                <span style={{ fontWeight: 600, color: colors.blue }}>{myPercent}%</span>
               </div>
               <div style={{ height: 5, borderRadius: 3, background: colors.bgElevated }}>
                 <div style={{
-                  height: '100%', width: `${l.progress}%`, borderRadius: 3,
+                  height: '100%', width: `${myPercent}%`, borderRadius: 3,
                   background: `linear-gradient(90deg, ${colors.blue}, ${colors.blueSoft})`,
                 }} />
               </div>

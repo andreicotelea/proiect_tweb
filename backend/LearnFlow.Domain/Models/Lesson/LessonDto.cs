@@ -16,5 +16,6 @@ namespace LearnFlow.Domain.Models.Lesson
         public string Thumbnail { get; set; } = string.Empty;
         public bool Locked { get; set; }
         public string? VideoUrl { get; set; }
+        public string? CertificateUrl { get; set; }
     }
 }
