@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Users, Eye, BookOpen, Star, BarChart3, Grid, Plus, Bell, FileText, Edit, Trash2, Settings, X, Save } from 'lucide-react';
+import { Users, Eye, BookOpen, Star, BarChart3, Grid, Plus, Bell, FileText, Edit, Trash2, Settings, X, Save, Key, Shield, UserMinus, UserPlus, GraduationCap } from 'lucide-react';
+import { progressService } from '@/api';
 import { useTheme } from '@/hooks/useTheme';
 import { StatCard } from '@/components';
 import { lessonService, categoryService, adminService, userService, apiClient } from '@/api';
@@ -150,6 +151,75 @@ export default function AdminPage() {
       flashMsg('Categorie stearsa.');
     } catch (err: any) {
       flashMsg(err.response?.data?.message || 'Eroare la stergere.');
+    }
+  };
+
+  // User admin actions
+  const [pwModalUser, setPwModalUser] = useState<UserItem | null>(null);
+  const [newUserPw, setNewUserPw] = useState('');
+  const [enrollModalUser, setEnrollModalUser] = useState<UserItem | null>(null);
+  const [userEnrollments, setUserEnrollments] = useState<number[]>([]);
+
+  const handleResetUserPw = async () => {
+    if (!pwModalUser || !newUserPw.trim()) return;
+    try {
+      await userService.adminResetPassword(pwModalUser.id, newUserPw);
+      flashMsg('Parola a fost resetata.');
+      setPwModalUser(null);
+      setNewUserPw('');
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare la resetare parola.');
+    }
+  };
+
+  const handleToggleRole = async (u: UserItem) => {
+    const newRole = u.role === 'admin' ? 'student' : 'admin';
+    if (!window.confirm(`Schimbi rolul lui ${u.name} in "${newRole}"?`)) return;
+    try {
+      await userService.adminUpdateRole(u.id, newRole);
+      setUsers(prev => prev.map(x => x.id === u.id ? { ...x, role: newRole } : x));
+      flashMsg('Rol actualizat.');
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare la actualizare rol.');
+    }
+  };
+
+  const handleDeleteUser = async (u: UserItem) => {
+    if (!window.confirm(`Stergi utilizatorul ${u.name}? Actiunea este ireversibila.`)) return;
+    try {
+      await userService.delete(u.id);
+      setUsers(prev => prev.filter(x => x.id !== u.id));
+      flashMsg('Utilizator sters.');
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare la stergere.');
+    }
+  };
+
+  const openEnrollModal = async (u: UserItem) => {
+    setEnrollModalUser(u);
+    try {
+      const res = await progressService.getByUser(u.id);
+      const data = res.data as any;
+      const list = Array.isArray(data) ? data : (data?.data ?? []);
+      setUserEnrollments(list.map((p: any) => p.lessonId));
+    } catch {
+      setUserEnrollments([]);
+    }
+  };
+
+  const toggleEnrollment = async (lessonId: number) => {
+    if (!enrollModalUser) return;
+    const isEnrolled = userEnrollments.includes(lessonId);
+    try {
+      if (isEnrolled) {
+        await progressService.unenroll(enrollModalUser.id, lessonId);
+        setUserEnrollments(prev => prev.filter(id => id !== lessonId));
+      } else {
+        await progressService.enroll({ userId: enrollModalUser.id, lessonId });
+        setUserEnrollments(prev => [...prev, lessonId]);
+      }
+    } catch (err: any) {
+      flashMsg(err.response?.data?.message || 'Eroare la modificare inscriere.');
     }
   };
 
@@ -336,15 +406,82 @@ export default function AdminPage() {
             <h3 style={{ fontSize: 15, fontWeight: 700 }}>Utilizatori ({USE_MOCK ? stats.totalUsers : users.length})</h3>
           </div>
           {users.map((u, i, arr) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: i < arr.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
-              <span style={{ width: 32, height: 32, borderRadius: 8, background: `${colors.blue}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: colors.blue }}>{u.avatar || 'U'}</span>
-              <div style={{ flex: 1 }}>
+            <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: i < arr.length - 1 ? `1px solid ${colors.border}` : 'none' }}>
+              <span style={{ width: 32, height: 32, borderRadius: 8, background: `${colors.blue}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: colors.blue, flexShrink: 0 }}>
+                {u.avatar ? <img src={u.avatar} alt="" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : (u.name?.[0] || 'U')}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 500, fontSize: 13.5 }}>{u.name}</div>
-                <div style={{ fontSize: 11.5, color: colors.textDim }}>{u.email || 'student'} · {u.role}</div>
+                <div style={{ fontSize: 11.5, color: colors.textDim, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email} · {u.role}</div>
               </div>
-              <span style={{ padding: '3px 9px', borderRadius: 5, fontSize: 10.5, background: u.role === 'admin' ? `${colors.blue}15` : 'rgba(109,191,160,0.12)', color: u.role === 'admin' ? colors.blue : colors.success }}>{u.role}</span>
+              <span style={{ padding: '3px 9px', borderRadius: 5, fontSize: 10.5, background: u.role === 'admin' ? `${colors.blue}15` : 'rgba(109,191,160,0.12)', color: u.role === 'admin' ? colors.blue : colors.success, flexShrink: 0 }}>{u.role}</span>
+              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                <button title="Reseteaza parola" onClick={() => { setPwModalUser(u); setNewUserPw(''); }} style={{ padding: '6px', borderRadius: 7, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Key size={14} /></button>
+                <button title={u.role === 'admin' ? 'Retrogadeaza la student' : 'Promoveaza la admin'} onClick={() => handleToggleRole(u)} style={{ padding: '6px', borderRadius: 7, border: `1px solid ${colors.border}`, background: 'transparent', color: u.role === 'admin' ? colors.blue : colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Shield size={14} /></button>
+                <button title="Gestioneaza lectii" onClick={() => openEnrollModal(u)} style={{ padding: '6px', borderRadius: 7, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><GraduationCap size={14} /></button>
+                <button title="Sterge utilizator" onClick={() => handleDeleteUser(u)} style={{ padding: '6px', borderRadius: 7, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.danger, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trash2 size={14} /></button>
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Password Reset Modal */}
+      {pwModalUser && (
+        <div onClick={() => setPwModalUser(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: colors.bgCard, borderRadius: 16, padding: 28, width: '100%', maxWidth: 420, border: `1px solid ${colors.border}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Reseteaza Parola — {pwModalUser.name}</h3>
+              <button onClick={() => setPwModalUser(null)} style={{ background: 'none', border: 'none', color: colors.textMuted, cursor: 'pointer' }}><X size={18} /></button>
+            </div>
+            <label style={{ fontSize: 12, color: colors.textMuted, display: 'block', marginBottom: 6 }}>Parola noua (min. 6 caractere)</label>
+            <input
+              type="password"
+              value={newUserPw}
+              onChange={e => setNewUserPw(e.target.value)}
+              placeholder="Parola noua..."
+              style={{ ...inputStyle, marginBottom: 16 }}
+            />
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button onClick={() => setPwModalUser(null)} style={{ padding: '9px 18px', borderRadius: 9, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13 }}>Anuleaza</button>
+              <button onClick={handleResetUserPw} style={{ padding: '9px 18px', borderRadius: 9, border: 'none', background: colors.blue, color: '#fff', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600 }}>Salveaza</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enrollments Management Modal */}
+      {enrollModalUser && (
+        <div onClick={() => setEnrollModalUser(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: colors.bgCard, borderRadius: 16, padding: 28, width: '100%', maxWidth: 500, maxHeight: '80vh', display: 'flex', flexDirection: 'column', border: `1px solid ${colors.border}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Lectii — {enrollModalUser.name}</h3>
+              <button onClick={() => setEnrollModalUser(null)} style={{ background: 'none', border: 'none', color: colors.textMuted, cursor: 'pointer' }}><X size={18} /></button>
+            </div>
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              {lessons.length === 0 ? (
+                <div style={{ color: colors.textDim, fontSize: 13, textAlign: 'center', padding: 20 }}>Nu exista lectii disponibile.</div>
+              ) : (
+                lessons.map(l => {
+                  const enrolled = userEnrollments.includes(l.id);
+                  return (
+                    <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 0', borderBottom: `1px solid ${colors.border}` }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 500 }}>{l.title}</div>
+                        <div style={{ fontSize: 11.5, color: colors.textDim }}>{l.category}</div>
+                      </div>
+                      <button onClick={() => toggleEnrollment(l.id)} style={{ padding: '6px 14px', borderRadius: 8, border: `1px solid ${enrolled ? colors.danger : colors.blue}`, background: enrolled ? `${colors.danger}15` : `${colors.blue}15`, color: enrolled ? colors.danger : colors.blue, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        {enrolled ? <><UserMinus size={13} /> Dezinscrie</> : <><UserPlus size={13} /> Inscrie</>}
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+              <button onClick={() => setEnrollModalUser(null)} style={{ padding: '9px 18px', borderRadius: 9, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.textMuted, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13 }}>Inchide</button>
+            </div>
+          </div>
         </div>
       )}
 

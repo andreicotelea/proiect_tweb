@@ -10,4 +10,7 @@ export const progressService = {
 
   enroll: (data: { userId: number; lessonId: number }) =>
     apiClient.post('/progress/enroll', data),
+
+  unenroll: (userId: number, lessonId: number) =>
+    apiClient.delete(`/progress/${userId}/${lessonId}`),
 };
