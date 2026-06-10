@@ -288,13 +288,3 @@ proiect_tweb/
 | `GET`  | `/api/health` | API health status |
 
 ---
-
-## 📄 License
-
-This project was developed for academic purposes as part of the **Web Technologies (TWEB)** course.
-
-<div align="center">
-
-Made with ☕ and ❤️ by **Andrei Cotelea**
-
-</div>
