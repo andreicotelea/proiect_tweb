@@ -250,7 +250,6 @@ The app is served at **http://localhost:5173**.
 | **Admin** | `admin1@learnflow.md` | `admin` |
 | **Student** | `ion@gmail.com` | `user123` |
 
-> ⚠️ These are seed/development credentials — change them before deploying.
 
 ---
 
